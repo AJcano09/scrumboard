@@ -9,8 +9,6 @@ namespace ScrumBoard.Application.Ports
 {
     public interface IUserRepository
     {
-        Task<User?> GetByIdAsync(Guid id);
         Task<User?> GetByEmailAsync(string email);
-        System.Threading.Tasks.Task AddASync(User user);
     }
 }
