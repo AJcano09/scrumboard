@@ -5,8 +5,10 @@ using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Repositories
 {
-    internal class ColumnRepository(ScrumDbContext context) : Repository<Column>(context), IColumnRepository
+    public class ColumnRepository(ScrumBoardDbContext context) : Repository<Column>(context), IColumnRepository
     {
+        private readonly ScrumBoardDbContext _context = context;
+
         public async Task<int> CountTasksByColumnIdAsync(Guid columnId)=>
             await _context.Tasks.CountAsync(t => t.ColumnId == columnId);
         

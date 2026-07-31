@@ -4,13 +4,8 @@ using System;
 
 namespace ScrumBoard.Infrastructure.Persistence
 {
-    public class ScrumDbContext : DbContext
+    public class ScrumBoardDbContext(DbContextOptions<ScrumBoardDbContext> options) : DbContext(options)
     {
-        public ScrumDbContext(DbContextOptions<ScrumDbContext> options) : base(options)
-        {
-            
-        }
-
         public DbSet<User>  Users => Set<User>();
 
         public DbSet<Project> Projects => Set<Project>();
@@ -21,7 +16,7 @@ namespace ScrumBoard.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ScrumDbContext).Assembly); 
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ScrumBoardDbContext).Assembly); 
         }
     }
 }

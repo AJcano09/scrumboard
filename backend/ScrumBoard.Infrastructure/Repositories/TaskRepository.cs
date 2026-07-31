@@ -4,8 +4,10 @@ using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Repositories
 {
-    public class TaskRepository(ScrumDbContext context) : Repository<Domain.Entities.Task>(context), ITaskRepository
+    public class TaskRepository(ScrumBoardDbContext context) : Repository<Domain.Entities.Task>(context), ITaskRepository
     {
+        private readonly ScrumBoardDbContext _context = context;
+
         public async Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdASync(Guid columnId) =>
             await _context.Tasks
             .Where(t => t.ColumnId == columnId)

@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace ScrumBoard.Infrastructure.Persistence
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ScrumDbContext>
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ScrumBoardDbContext>
 {
-        public ScrumDbContext CreateDbContext(string[] args)
+        public ScrumBoardDbContext CreateDbContext(string[] args)
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
@@ -32,12 +32,12 @@ namespace ScrumBoard.Infrastructure.Persistence
                 throw new InvalidOperationException("Could not find 'DefaultConnection' in appsettings configuration.");
             }
 
-            var optionsBuilder = new DbContextOptionsBuilder<ScrumDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ScrumBoardDbContext>();
 
             optionsBuilder.UseNpgsql(connectionString, b =>
-                b.MigrationsAssembly(typeof(ScrumDbContext).Assembly.FullName));
+                b.MigrationsAssembly(typeof(ScrumBoardDbContext).Assembly.FullName));
 
-            return new ScrumDbContext(optionsBuilder.Options);
+            return new ScrumBoardDbContext(optionsBuilder.Options);
         }
     }
 }

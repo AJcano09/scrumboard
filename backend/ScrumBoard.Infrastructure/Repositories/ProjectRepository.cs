@@ -5,8 +5,10 @@ using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Repositories
 {
-    public class ProjectRepository(ScrumDbContext context) : Repository<Project>(context), IProjectRepository
+    public class ProjectRepository(ScrumBoardDbContext context) : Repository<Project>(context), IProjectRepository
     {
+        private readonly  ScrumBoardDbContext _context = context;
+
         public async Task<(IEnumerable<Project> items, int TotalCount)> GetPagedASync(string searchTerm, int pageNumber, int pageSize)
         {
             var query = _context.Projects.AsQueryable();

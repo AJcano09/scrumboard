@@ -10,7 +10,7 @@ using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Migrations
 {
-    [DbContext(typeof(ScrumDbContext))]
+    [DbContext(typeof(ScrumBoardDbContext))]
     partial class ScrumDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

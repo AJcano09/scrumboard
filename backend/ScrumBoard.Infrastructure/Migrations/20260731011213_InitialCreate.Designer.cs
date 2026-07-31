@@ -11,7 +11,7 @@ using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Migrations
 {
-    [DbContext(typeof(ScrumDbContext))]
+    [DbContext(typeof(ScrumBoardDbContext))]
     [Migration("20260731011213_InitialCreate")]
     partial class InitialCreate
     {

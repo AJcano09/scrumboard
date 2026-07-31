@@ -5,9 +5,9 @@ namespace ScrumBoard.Infrastructure.Repositories
 {
     public class Repository<T> where T : class
     {
-        protected readonly ScrumDbContext _context;
+        private readonly ScrumBoardDbContext _context;
 
-        protected Repository(ScrumDbContext context)
+        protected Repository(ScrumBoardDbContext context)
         {
             _context = context;
         }
