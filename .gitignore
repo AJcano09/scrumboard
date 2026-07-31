@@ -10,3 +10,9 @@ dist/
 
 # Env
 .env
+
+.DS_Store
+.idea/
+.vs/
+backend/.idea/
+backend/.vs/
