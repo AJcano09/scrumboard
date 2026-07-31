@@ -1,17 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
+using ScrumBoard.Infrastructure.Persistence;
 
-
-namespace ScrumBoard.Infrastructure.Persistence
+namespace ScrumBoard.Infrastructure.Repositories
 {
-    internal class ColumnRepository : Repository<Column>, IColumnRepository
+    internal class ColumnRepository(ScrumDbContext context) : Repository<Column>(context), IColumnRepository
     {
-        public ColumnRepository(ScrumDbContext context) : base(context)
-        {
-            
-        }
-
         public async Task<int> CountTasksByColumnIdAsync(Guid columnId)=>
             await _context.Tasks.CountAsync(t => t.ColumnId == columnId);
         

@@ -1,15 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
+using ScrumBoard.Infrastructure.Persistence;
 
-namespace ScrumBoard.Infrastructure.Persistence
+namespace ScrumBoard.Infrastructure.Repositories
 {
-    public class ProjectRepository : Repository<Project>, IProjectRepository
+    public class ProjectRepository(ScrumDbContext context) : Repository<Project>(context), IProjectRepository
     {
-        public ProjectRepository(ScrumDbContext context) : base(context)
-        {
-            
-        }
         public async Task<(IEnumerable<Project> items, int TotalCount)> GetPagedASync(string searchTerm, int pageNumber, int pageSize)
         {
             var query = _context.Projects.AsQueryable();

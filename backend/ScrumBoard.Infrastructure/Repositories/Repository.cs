@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using ScrumBoard.Infrastructure.Persistence;
 
-namespace ScrumBoard.Infrastructure.Persistence
+namespace ScrumBoard.Infrastructure.Repositories
 {
     public class Repository<T> where T : class
     {
         protected readonly ScrumDbContext _context;
-        public Repository(ScrumDbContext context)
+
+        protected Repository(ScrumDbContext context)
         {
             _context = context;
         }

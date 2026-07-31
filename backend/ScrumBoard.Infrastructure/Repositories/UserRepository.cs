@@ -1,15 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
+using ScrumBoard.Infrastructure.Persistence;
 
-namespace ScrumBoard.Infrastructure.Persistence
+namespace ScrumBoard.Infrastructure.Repositories
 {
-    public class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository(ScrumDbContext context) : Repository<User>(context), IUserRepository
     {
-        public UserRepository(ScrumDbContext context) : base(context)
-        {  
-        }
-
         public async Task<User?> GetByEmailAsync(string email)=> 
            await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }

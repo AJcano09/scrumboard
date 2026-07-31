@@ -1,14 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScrumBoard.Application.Ports;
+using ScrumBoard.Infrastructure.Persistence;
 
-namespace ScrumBoard.Infrastructure.Persistence
+namespace ScrumBoard.Infrastructure.Repositories
 {
-    public class TaskRepository : Repository<Domain.Entities.Task>, ITaskRepository
+    public class TaskRepository(ScrumDbContext context) : Repository<Domain.Entities.Task>(context), ITaskRepository
     {
-        public TaskRepository(ScrumDbContext context) : base(context)
-        {
-            
-        }
         public async Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdASync(Guid columnId) =>
             await _context.Tasks
             .Where(t => t.ColumnId == columnId)
