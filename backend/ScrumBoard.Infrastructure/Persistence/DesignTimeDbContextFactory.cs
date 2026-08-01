@@ -25,11 +25,11 @@ namespace ScrumBoard.Infrastructure.Persistence
                 .AddEnvironmentVariables()
                 .Build();
 
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetConnectionString("ScrumBoardConnection");
 
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new InvalidOperationException("Could not find 'DefaultConnection' in appsettings configuration.");
+                throw new InvalidOperationException("Could not find 'ScrumBoardConnection' in appsettings configuration.");
             }
 
             var optionsBuilder = new DbContextOptionsBuilder<ScrumBoardDbContext>();
