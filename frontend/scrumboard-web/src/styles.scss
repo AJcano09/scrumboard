@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+/* Estilos requeridos por PrimeNG */
+@import "primeng/resources/primeng.min.css";
+@import "primeicons/primeicons.css";
+
+/* PrimeFlex para el sistema de grillas y utilidades (Sakai lo usa mucho) */
+@import "primeflex/primeflex.scss";
+
+/* Estilos estructurales del Layout de Sakai */
+@import "assets/layout/styles/layout/layout.scss";
