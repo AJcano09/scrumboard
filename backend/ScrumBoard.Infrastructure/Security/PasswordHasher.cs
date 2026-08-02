@@ -9,7 +9,7 @@ public class PasswordHasher(IConfiguration configuration) : IPasswordHasher
     private const int SaltSize = 16;
     private const int KeySize = 32;
     private const int Iterations = 100_000;
-    private readonly string _pepper = configuration["Security:pepper"]
+    private readonly string _pepper = configuration["Security:Pepper"]
                                       ?? throw new InvalidOperationException("Security:Pepper no configurado.");
 
     public string HashPassword(string password)

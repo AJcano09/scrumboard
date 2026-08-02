@@ -21,7 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //jwt
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()!;
+var jwtSettings = builder.Configuration.GetSection("Jwt:JwtSettings").Get<JwtSettings>()!;
 
 builder.Services.AddAuthentication(options =>
 {
