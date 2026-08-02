@@ -21,7 +21,7 @@ namespace ScrumBoard.Domain.Entities
 
         public Guid ColumnId { get; set; }
 
-        public int Order { get; set; }
+        public decimal Order { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
