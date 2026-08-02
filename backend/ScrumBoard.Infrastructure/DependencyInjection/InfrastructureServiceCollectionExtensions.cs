@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ScrumBoard.Application.Auth;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Infrastructure.Persistence;
 using ScrumBoard.Infrastructure.Repositories;
@@ -47,6 +48,14 @@ namespace ScrumBoard.Infrastructure.DependencyInjection
             
             // 3. Registrar el Seeder
             services.AddTransient<DatabaseSeeder>();
+            
+            // 4.services
+            services.AddScoped<ITokenService, JwtTokenService>();
+           
+            // 5.options
+            
+            services.Configure<JwtSettings>(configuration.GetSection("Jwt:JwtSettings"));
+           
             return services;
         }
     }
