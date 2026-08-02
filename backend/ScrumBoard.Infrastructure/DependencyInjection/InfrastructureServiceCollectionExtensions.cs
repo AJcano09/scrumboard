@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Infrastructure.Persistence;
 using ScrumBoard.Infrastructure.Repositories;
+using ScrumBoard.Infrastructure.Security;
 using ScrumBoard.Infrastructure.Seeders;
 
 namespace ScrumBoard.Infrastructure.DependencyInjection
@@ -41,7 +42,7 @@ namespace ScrumBoard.Infrastructure.DependencyInjection
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IColumnRepository, ColumnRepository>();
             services.AddScoped<ITaskRepository, TaskRepository>();
-            //services.AddSingleton<IPasswordHasher, PasswordHasher>(); TODO: implement IpasswordHasher
+            services.AddSingleton<IPasswordHasher, PasswordHasher>(); 
             
             
             // 3. Registrar el Seeder
