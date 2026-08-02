@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ScrumBoard.Application.DependencyInjection;
+using ScrumBoard.Application.Ports;
 using ScrumBoard.Infrastructure.DependencyInjection;
 using ScrumBoard.Infrastructure.Persistence;
 using ScrumBoard.Infrastructure.Seeders;
@@ -39,7 +40,8 @@ static async Task InitializeDatabaseAsync(WebApplication app)
     try
     {
         var context = services.GetRequiredService<ScrumBoardDbContext>();
-        var dbSeeder = new DatabaseSeeder(context);
+        var passwordHasher = services.GetRequiredService<IPasswordHasher>();
+        var dbSeeder = new DatabaseSeeder(context,passwordHasher);
         await dbSeeder.SeedAsync();
     }
     catch (Exception ex)

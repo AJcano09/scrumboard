@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
 using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Seeders
 {
-    public class DatabaseSeeder(ScrumBoardDbContext context)
+    public class DatabaseSeeder(ScrumBoardDbContext context,IPasswordHasher hasher)
     {
         public async System.Threading.Tasks.Task SeedAsync()
         {
@@ -22,14 +23,14 @@ namespace ScrumBoard.Infrastructure.Seeders
                     Id = adminUserId,
                     Name = "Admin Default",
                     Email = "admin@scrumboard.com",
-                    PasswordHash = "HASH_TEMPORAL"
+                    PasswordHash = hasher.HashPassword("Login.1234")
                 };
                 var adminUser2 = new User
                 {
                     Id = adminUser2Id,
                     Name = "Admin 2",
                     Email = "admin2@scrumboard.com",
-                    PasswordHash = "HASH_TEMPORAL"
+                    PasswordHash = hasher.HashPassword("Login.1234")
                 };
 
                 await context.Users.AddAsync(adminUser);
