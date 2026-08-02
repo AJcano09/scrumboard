@@ -5,7 +5,7 @@ namespace ScrumBoard.Api.Controllers;
 
 [ApiController]
 [Route("api/projects")]
-[Authorize]
+
 public class ProjectsController : ControllerBase
 {
    
