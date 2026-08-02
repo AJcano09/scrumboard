@@ -7,6 +7,25 @@ obj/
 node_modules/
 dist/
 .angular/
+coverage/
+.eslintcache
+.cache/
+.parcel-cache/
+.vite/
+*.tsbuildinfo
+
+# Build outputs
+build/
+out/
+.next/
+.nuxt/
+
+# Python cache (just in case)
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Env
 .env
@@ -14,5 +33,6 @@ dist/
 .DS_Store
 .idea/
 .vs/
+.atl/
 backend/.idea/
 backend/.vs/
