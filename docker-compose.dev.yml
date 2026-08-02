@@ -1,0 +1,32 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/ScrumBoard.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    command: ["sh", "-c", "dotnet watch run --project backend/ScrumBoard.Api/ScrumBoard.Api.csproj --urls http://0.0.0.0:8080"]
+    ports:
+      - "${API_PORT:-5001}:8080"
+    volumes:
+      - .:/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: frontend/scrumboard-web
+      dockerfile: Dockerfile
+      target: development
+    image: scrumboard-web-dev
+    command: ["sh", "-c", "npm install && npx ng serve --host 0.0.0.0 --poll 1000 --port 4200 --proxy-config proxy.conf.json"]
+    ports:
+      - "${WEB_PORT:-4201}:4200"
+    volumes:
+      - ./frontend/scrumboard-web:/app
+    depends_on:
+      api:
+        condition: service_started
+      postgres:
+        condition: service_healthy

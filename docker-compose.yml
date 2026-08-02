@@ -3,18 +3,38 @@ services:
     image: postgres:15
     container_name: scrumboard-postgres
     environment:
-      POSTGRES_DB: ScrumBoardDb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-scrumboard_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ScrumBoardDb"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-scrumboard_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/ScrumBoard.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__ScrumBoardConnection: ${ConnectionStrings__ScrumBoardConnection:-Host=postgres;Port=5432;Database=scrumboard_db;Username=postgres;Password=postgres}
+      Jwt__JwtSettings__Secret: ${Jwt__JwtSettings__Secret:-change-me-super-secret-key-min-32-chars}
+      Jwt__JwtSettings__Issuer: ${Jwt__JwtSettings__Issuer:-ScrumBoardApi}
+      Jwt__JwtSettings__Audience: ${Jwt__JwtSettings__Audience:-ScrumBoardClient}
+      Jwt__JwtSettings__ExpirationMinutes: ${Jwt__JwtSettings__ExpirationMinutes:-60}
+      Security__Pepper: ${Security__Pepper:-change-me-in-production}
+
+  web:
+    build:
+      context: frontend/scrumboard-web
+      dockerfile: Dockerfile
+    environment:
+      API_URL: ${API_URL:-http://localhost:5001/api}
 
 volumes:
   postgres_data:
