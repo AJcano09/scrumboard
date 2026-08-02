@@ -6,12 +6,13 @@ namespace ScrumBoard.Infrastructure.Repositories
 {
     public class TaskRepository(ScrumBoardDbContext context) : Repository<Domain.Entities.Task>(context), ITaskRepository
     {
-        private readonly ScrumBoardDbContext _context = context;
 
-        public async Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdASync(Guid columnId) =>
+        public async Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdAsync(Guid columnId) =>
             await _context.Tasks
             .Where(t => t.ColumnId == columnId)
             .OrderBy(t => t.Order)
             .ToListAsync();
+
+      
     }
 }

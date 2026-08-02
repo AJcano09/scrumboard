@@ -7,8 +7,6 @@ namespace ScrumBoard.Infrastructure.Repositories
 {
     public class ColumnRepository(ScrumBoardDbContext context) : Repository<Column>(context), IColumnRepository
     {
-        private readonly ScrumBoardDbContext _context = context;
-
         public async Task<int> CountTasksByColumnIdAsync(Guid columnId)=>
             await _context.Tasks.CountAsync(t => t.ColumnId == columnId);
         
@@ -17,5 +15,8 @@ namespace ScrumBoard.Infrastructure.Repositories
             await _context.Columns.Where(c => c.ProjectId == projectId)
             .OrderBy(c=>c.Order)
             .ToListAsync();
+        
+        
+        
     }
 }

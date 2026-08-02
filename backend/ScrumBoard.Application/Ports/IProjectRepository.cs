@@ -1,14 +1,9 @@
 ﻿using ScrumBoard.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScrumBoard.Application.Ports
 {
-    public interface IProjectRepository
+    public interface IProjectRepository : IRepository<Project>
     {
-        Task<(IEnumerable<Project> items, int TotalCount)> GetPagedASync(string searchTerm, int pageNumber, int pageSize);
+        Task<(IEnumerable<Project> items, int TotalCount)> GetPagedAsync(string searchTerm, int pageNumber, int pageSize);
     }
 }

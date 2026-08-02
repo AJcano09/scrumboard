@@ -39,6 +39,7 @@ namespace ScrumBoard.Infrastructure.DependencyInjection
             });
 
             //2. Repositories
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IColumnRepository, ColumnRepository>();

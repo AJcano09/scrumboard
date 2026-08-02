@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ScrumBoard.Application.Ports
 {
-    public interface ITaskRepository
+    public interface ITaskRepository :IRepository<Domain.Entities.Task>
     {
-        Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdASync(Guid columnId);
+        Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdAsync(Guid columnId);
       
     }
 }
