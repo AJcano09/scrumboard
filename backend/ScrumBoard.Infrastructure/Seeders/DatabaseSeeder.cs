@@ -47,7 +47,6 @@ namespace ScrumBoard.Infrastructure.Seeders
                         Id = project1Id, 
                         Name = "Sistema Scrum Principal",
                         Description = "Este es un proyecto inicial generado automáticamente.",
-                        Order = 1,
                         StartDate = DateTime.UtcNow,
                         EndDate = DateTime.UtcNow.AddMonths(1),
                         Status = ProjectStatus.Pending 
@@ -56,8 +55,7 @@ namespace ScrumBoard.Infrastructure.Seeders
                     {
                         Id = project2Id,
                         Name = "Migración a la Nube",
-                        Description = "Proyecto planeado para la siguiente fase.",
-                        Order = 2,
+                        Description = "Proyecto planeado para la siguiente fase.", 
                         StartDate = DateTime.UtcNow.AddMonths(1),
                         EndDate = DateTime.UtcNow.AddMonths(3),
                         Status = ProjectStatus.InProgres 
@@ -67,7 +65,6 @@ namespace ScrumBoard.Infrastructure.Seeders
                         Id = project3Id,
                         Name = "Auditoría de Código",
                         Description = "Proyecto completado exitosamente.",
-                        Order = 3,
                         StartDate = DateTime.UtcNow.AddMonths(-2),
                         EndDate = DateTime.UtcNow.AddMonths(-1),
                         Status = ProjectStatus.Completed
