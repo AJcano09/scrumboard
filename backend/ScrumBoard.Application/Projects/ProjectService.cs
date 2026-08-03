@@ -33,7 +33,7 @@ public class ProjectService(IProjectRepository projectRepository)
 
     public async Task<ProjectDto> CreateAsync(CreateProjectRequest request)
     {
-        Validate(request.Name, request.StartDate, request.EndDate);
+        var projectStatus = ProjectStatus.ValidateAndParseStatus(request.Name, request.StartDate, request.EndDate,request.Status);
 
         var project = new Project
         {
@@ -42,7 +42,7 @@ public class ProjectService(IProjectRepository projectRepository)
             Description = request.Description?.Trim() ?? string.Empty,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            Status = ProjectStatus.FromName(request.Status)
+            Status =projectStatus,
         };
 
         await projectRepository.AddAsync(project);
@@ -54,13 +54,14 @@ public class ProjectService(IProjectRepository projectRepository)
         var project = await projectRepository.GetByIdAsync(id);
         if (project is null) return null;
 
-        Validate(request.Name, request.StartDate, request.EndDate);
+        var projectStatus =
+            ProjectStatus.ValidateAndParseStatus(request.Name, request.StartDate, request.EndDate, request.Status);
 
         project.Name = request.Name.Trim();
         project.Description = request.Description?.Trim() ?? string.Empty;
         project.StartDate = request.StartDate;
         project.EndDate = request.EndDate;
-        project.Status = ProjectStatus.FromName(request.Status);
+        project.Status = projectStatus;
 
         await projectRepository.UpdateAsync(project);
         return ToDto(project);

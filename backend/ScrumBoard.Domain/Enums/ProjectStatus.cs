@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using ScrumBoard.Application.Projects;
+
 namespace ScrumBoard.Domain.Enums;
 
 public sealed class ProjectStatus(string name, int value)
@@ -33,5 +36,24 @@ public sealed class ProjectStatus(string name, int value)
             nameof(Cancelled) => Cancelled,
             _ => throw new ArgumentException($"El nombre '{name}' no es un estado de proyecto válido.", nameof(name))
         };
+    }
+
+    public static ProjectStatus ValidateAndParseStatus(string name, DateTime startDate, DateTime endDate,
+        string status)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ProjectValidationException("El nombre del proyecto es obligatorio.");
+
+        if (endDate < startDate)
+            throw new ProjectValidationException("La fecha de fin no puede ser anterior a la fecha de inicio.");
+
+        try
+        {
+            return FromName(status);
+        }
+        catch (ArgumentException)
+        {
+            throw new ProjectValidationException($"El estado '{status}' no es válido.");
+        }  
     }
 }
