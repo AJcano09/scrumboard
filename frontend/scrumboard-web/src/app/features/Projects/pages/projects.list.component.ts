@@ -53,7 +53,7 @@ export class ProjectsListComponent implements OnInit {
       label:'Pendiente',value: ProjectStatus.Pending
     },
     {
-      label:'En Progreso',value: ProjectStatus.InProgres
+      label:'En Progreso',value: ProjectStatus.InProgress
     },
     {
       label:'Completada',value: ProjectStatus.Completed

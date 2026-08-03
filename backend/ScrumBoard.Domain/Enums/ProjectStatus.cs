@@ -6,7 +6,7 @@ namespace ScrumBoard.Domain.Enums;
 public sealed class ProjectStatus(string name, int value)
 {
     public static readonly ProjectStatus Pending = new("Pending",1);
-    public static readonly ProjectStatus InProgres = new("InProgres",2);
+    public static readonly ProjectStatus InProgres = new("InProgress",2);
     public static readonly ProjectStatus Completed = new("Completed",3);
     public static readonly ProjectStatus Cancelled = new("Cancelled",4);
     
