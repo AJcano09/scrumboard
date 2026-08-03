@@ -19,7 +19,7 @@ namespace ScrumBoard.Domain.Entities
 
         public DateTime EndDate { get; set; }
 
-        public ProjectStatus Status { get; set; }
+        public ProjectStatus Status { get; set; } = ProjectStatus.Pending;
 
         public ICollection<Column> Columns { get; set; } = [];
 
