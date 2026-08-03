@@ -1,0 +1,105 @@
+
+
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="card">
+  <div class="flex justify-content-between align-items-center mb-3">
+    <h5 class="m-0">Proyectos</h5>
+    <button pButton icon="pi pi-plus" label="Nuevo proyecto" (click)="openCreateDialog()"></button>
+  </div>
+
+  <p-table
+    #dt
+    [value]="projects"
+    [lazy]="true"
+    (onLazyLoad)="loadProjects($event)"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="totalRecords"
+    [loading]="loading"
+    [rowsPerPageOptions]="[10, 20, 50]"
+    responsiveLayout="scroll">
+
+    <ng-template pTemplate="caption">
+      <div class="flex justify-content-end">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" placeholder="Buscar por nombre..."
+                 (input)="onSearchInput($any($event.target).value)" />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Estado</th>
+        <th style="width: 8rem">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-project>
+      <tr>
+        <td>{{ project.name }}</td>
+        <td>{{ project.description }}</td>
+        <td>{{ project.startDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ project.endDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ project.status }}</td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(project)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" (click)="confirmDelete(project)"></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="6" class="text-center">No hay proyectos registrados.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="dialogVisible" [header]="editingProject ? 'Editar proyecto' : 'Nuevo proyecto'"
+          [modal]="true" [style]="{ width: '32rem' }">
+
+  <form [formGroup]="form" class="flex flex-column gap-3">
+    <div class="flex flex-column gap-2">
+      <label for="name">Nombre</label>
+      <input id="name" pInputText formControlName="name" />
+      <small class="p-error" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+        El nombre es obligatorio (máx. 150 caracteres).
+      </small>
+    </div>
+
+    <div class="flex flex-column gap-2">
+      <label for="description">Descripción</label>
+      <textarea id="description" pInputTextarea formControlName="description" rows="3"></textarea>
+    </div>
+
+    <div class="flex gap-3">
+      <div class="flex flex-column gap-2 flex-1">
+        <label for="startDate">Fecha de inicio</label>
+        <p-calendar id="startDate" formControlName="startDate" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+      </div>
+      <div class="flex flex-column gap-2 flex-1">
+        <label for="endDate">Fecha de fin</label>
+        <p-calendar id="endDate" formControlName="endDate" dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
+      </div>
+    </div>
+
+    <div class="flex flex-column gap-2">
+      <label for="status">Estado</label>
+      <p-dropdown id="status" formControlName="status" [options]="statusOptions"
+                  placeholder="seleccione un estado" optionLabel="label" optionValue="value"></p-dropdown>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancelar" class="p-button-text" (click)="dialogVisible = false"></button>
+    <button pButton label="Guardar" (click)="save()"></button>
+  </ng-template>
+</p-dialog>
