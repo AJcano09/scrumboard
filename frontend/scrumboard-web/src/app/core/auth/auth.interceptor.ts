@@ -2,10 +2,11 @@ import {HttpInterceptorFn} from "@angular/common/http";
 import {AuthService} from "./auth.service";
 import {inject} from "@angular/core";
 import {catchError, throwError} from "rxjs";
+import {StorageKeys} from "../constants/storage-keys.constant";
 
 export const authInterceptor:HttpInterceptorFn=(req,next)=>{
   const auth = inject(AuthService);
-  const token = typeof window !== 'undefined' ? window.localStorage.getItem('authToken') : null;
+  const token = typeof window !== 'undefined' ? window.localStorage.getItem(StorageKeys.AuthToken) : null;
 
   const authReq =token
   ? req.clone(
