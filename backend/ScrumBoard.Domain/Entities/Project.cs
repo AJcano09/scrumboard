@@ -15,8 +15,6 @@ namespace ScrumBoard.Domain.Entities
 
         public string Description { get; set; } = string.Empty;
 
-        public int Order { get; set; }
-
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
