@@ -1,14 +1,9 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
+using ScrumBoard.Api.DependencyInjection;
 using ScrumBoard.Application.DependencyInjection;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Infrastructure.DependencyInjection;
 using ScrumBoard.Infrastructure.Persistence;
-using ScrumBoard.Infrastructure.Security;
 using ScrumBoard.Infrastructure.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,60 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddControllers(options =>
-{
-    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-})
-.AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
-});
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-//jwt
-var jwtSettings = builder.Configuration.GetSection("Jwt:JwtSettings").Get<JwtSettings>()!;
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings.Issuer,
-        ValidAudience = jwtSettings.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
-    };
-    
-    //necesario para SignalR (dia 5 ) reciba el token via query string 
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var accesToken = context.Request.Query["access_token"];
-            if (!string.IsNullOrEmpty(accesToken) &&
-                context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
-            {
-                context.Token = accesToken;
-            }
-
-            return Task.CompletedTask;
-        }
-    };
-});
-
-builder.Services.AddAuthorization();
+// Configuración limpia de Swagger con soporte JWT via Extension Method
+builder.Services.AddSwaggerDocumentation();
+builder.Services.AddApiAuthenticationAndControllers(builder.Configuration);
 
 var app = builder.Build();
 await InitializeDatabaseAsync(app);
