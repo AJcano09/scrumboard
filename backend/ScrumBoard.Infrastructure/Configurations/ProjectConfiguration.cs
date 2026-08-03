@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ScrumBoard.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ScrumBoard.Infrastructure.Persistence.Converters;
 
 namespace ScrumBoard.Infrastructure.Configurations
 {
@@ -16,7 +12,11 @@ namespace ScrumBoard.Infrastructure.Configurations
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Name).IsRequired().HasMaxLength(150);
             builder.Property(p => p.Description).HasMaxLength(500);
-            builder.Property(p => p.Status).IsRequired().HasMaxLength(50);
+            builder.Property(p => p.Status)
+                .HasConversion<ProjectStatusConverter>()
+                .HasColumnName("Status")
+                .HasMaxLength(50)
+                .IsRequired();
 
             builder.HasMany(p => p.Columns)
                 .WithOne(c => c.Project)
