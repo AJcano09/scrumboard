@@ -42,33 +42,30 @@ namespace ScrumBoard.Infrastructure.Seeders
                 var project3Id = Guid.NewGuid();
                 var sampleProjects = new List<Project>
                 {
-                    new Project
-                    {
-                        Id = project1Id, 
-                        Name = "Sistema Scrum Principal",
-                        Description = "Este es un proyecto inicial generado automáticamente.",
-                        StartDate = DateTime.UtcNow,
-                        EndDate = DateTime.UtcNow.AddMonths(1),
-                        Status = ProjectStatus.Pending 
-                    },
-                    new Project
-                    {
-                        Id = project2Id,
-                        Name = "Migración a la Nube",
-                        Description = "Proyecto planeado para la siguiente fase.", 
-                        StartDate = DateTime.UtcNow.AddMonths(1),
-                        EndDate = DateTime.UtcNow.AddMonths(3),
-                        Status = ProjectStatus.InProgres 
-                    },
-                    new Project
-                    {
-                        Id = project3Id,
-                        Name = "Auditoría de Código",
-                        Description = "Proyecto completado exitosamente.",
-                        StartDate = DateTime.UtcNow.AddMonths(-2),
-                        EndDate = DateTime.UtcNow.AddMonths(-1),
-                        Status = ProjectStatus.Completed
-                    }
+                    new Project(
+                        project1Id, 
+                        "Sistema Scrum Principal", 
+                        "Este es un proyecto inicial generado automáticamente.",
+                        DateTime.UtcNow,
+                        DateTime.UtcNow.AddMonths(1),
+                        "Pending"
+                    ),
+                    new Project(
+                        project2Id, 
+                        "Migración a la Nube", 
+                        "Proyecto planeado para la siguiente fase.", 
+                        DateTime.UtcNow.AddMonths(1),
+                        DateTime.UtcNow.AddMonths(3),
+                        "InProgres"
+                    ),
+                    new Project(
+                        project3Id, 
+                        "Auditoría de Código", 
+                        "Proyecto completado exitosamente.",
+                        DateTime.UtcNow.AddMonths(-2),
+                        DateTime.UtcNow.AddMonths(-1),
+                        "Completed"
+                    )
                 };
 
                 await context.Projects.AddRangeAsync(sampleProjects);

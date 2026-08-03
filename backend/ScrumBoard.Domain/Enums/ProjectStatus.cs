@@ -37,25 +37,4 @@ public sealed class ProjectStatus(string name, int value)
             _ => throw new ArgumentException($"El nombre '{name}' no es un estado de proyecto válido.", nameof(name))
         };
     }
-
-    public static ProjectStatus ValidateAndParseStatus(string name,string description, DateTime startDate, DateTime endDate,
-        string status)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ProjectValidationException("El nombre del proyecto es obligatorio.");
-
-        if (string.IsNullOrWhiteSpace(description))
-            throw new ProjectValidationException("La descripción del proyecto es obligatoria.");
-        if (endDate < startDate)
-            throw new ProjectValidationException("La fecha de fin no puede ser anterior a la fecha de inicio.");
-
-        try
-        {
-            return FromName(status);
-        }
-        catch (ArgumentException)
-        {
-            throw new ProjectValidationException($"El estado '{status}' no es válido.");
-        }  
-    }
 }
