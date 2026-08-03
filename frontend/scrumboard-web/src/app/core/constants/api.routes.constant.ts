@@ -5,9 +5,11 @@ export const ApiRoutes = {
     RefreshToken: '/auth/refresh'
   },
   Projects: {
-    GetAll: '/projects',
+    GetPaged: '/projects',
     GetById: (id: string) => `/projects/${id}`,
     Create: '/projects',
+    Update:(id:string) => `/projects/${id}`,
+    Delete:(id: string) => `/projects/${id}`,
   },
   Users: {
     Profile: '/users/profile'
