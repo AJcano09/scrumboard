@@ -8,7 +8,7 @@ namespace ScrumBoard.Api.Controllers;
 [Route("api/auth")]
 public class AuthController(AuthService authService) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login(LoginRequest request)
     {
