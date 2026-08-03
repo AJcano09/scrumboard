@@ -1,6 +1,7 @@
 using ScrumBoard.Application.Common;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
+using ScrumBoard.Domain.Enums;
 
 namespace ScrumBoard.Application.Projects;
 
@@ -41,7 +42,7 @@ public class ProjectService(IProjectRepository projectRepository)
             Description = request.Description?.Trim() ?? string.Empty,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            Status = request.Status
+            Status = ProjectStatus.FromName(request.Status)
         };
 
         await projectRepository.AddAsync(project);
@@ -59,7 +60,7 @@ public class ProjectService(IProjectRepository projectRepository)
         project.Description = request.Description?.Trim() ?? string.Empty;
         project.StartDate = request.StartDate;
         project.EndDate = request.EndDate;
-        project.Status = request.Status;
+        project.Status = ProjectStatus.FromName(request.Status);
 
         await projectRepository.UpdateAsync(project);
         return ToDto(project);
