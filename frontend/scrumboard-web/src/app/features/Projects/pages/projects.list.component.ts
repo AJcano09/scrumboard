@@ -124,6 +124,7 @@ export class ProjectsListComponent implements OnInit {
         endDate: new Date(),
         status: ProjectStatus.Pending
       });
+      this.dialogVisible=true;
     }
 
     openEditDialog(project:Project):void{
