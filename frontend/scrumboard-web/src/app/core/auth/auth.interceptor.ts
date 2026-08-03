@@ -6,6 +6,9 @@ import {StorageKeys} from "../constants/storage-keys.constant";
 
 export const authInterceptor:HttpInterceptorFn=(req,next)=>{
   const auth = inject(AuthService);
+  if (req.url.includes('/api/auth/login')) {
+    return next(req);
+  }
   const token = typeof window !== 'undefined' ? window.localStorage.getItem(StorageKeys.AuthToken) : null;
 
   const authReq =token
