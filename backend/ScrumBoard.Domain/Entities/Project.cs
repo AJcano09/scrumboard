@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ScrumBoard.Domain.Enums;
 
 namespace ScrumBoard.Domain.Entities
 {
@@ -20,7 +21,7 @@ namespace ScrumBoard.Domain.Entities
 
         public DateTime EndDate { get; set; }
 
-        public bool Status { get; set; }
+        public ProjectStatus Status { get; set; }
 
         public ICollection<Column> Columns { get; set; } = [];
 
