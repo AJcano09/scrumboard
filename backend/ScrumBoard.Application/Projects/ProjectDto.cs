@@ -9,6 +9,6 @@ public class ProjectDto
     public string Description { get; init; } = string.Empty;
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }
-    public ProjectStatus Status { get; init; }
-    
+    public string Status { get; init; } = string.Empty;
+
 }

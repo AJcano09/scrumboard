@@ -91,6 +91,6 @@ public class ProjectService(IProjectRepository projectRepository)
         Description = project.Description,
         StartDate = project.StartDate,
         EndDate = project.EndDate,
-        Status = project.Status
+        Status = project.Status.Name
     };
 }
