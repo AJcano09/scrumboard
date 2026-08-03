@@ -1,0 +1,49 @@
+<div class="flex align-items-center justify-content-center min-h-screen surface-ground">
+  <p-card header="ScrumBoard" styleClass="w-25rem">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-column gap-3">
+
+      <div class="flex flex-column gap-2">
+        <label for="email">Correo electrónico</label>
+        <input
+          id="email"
+          type="email"
+          pInputText
+          formControlName="email"
+          placeholder="usuario@ideasgroup.dev" />
+        <small
+          class="p-error"
+          *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+          Ingresa un correo válido.
+        </small>
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label for="password">Contraseña</label>
+        <p-password
+          id="password"
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          styleClass="w-full"
+          inputStyleClass="w-full">
+        </p-password>
+        <small
+          class="p-error"
+          *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+          La contraseña es obligatoria.
+        </small>
+      </div>
+
+      <p-message *ngIf="errorMessage" severity="error" [text]="errorMessage"></p-message>
+
+      <button
+        pButton
+        type="submit"
+        label="Ingresar"
+        [loading]="loading"
+        class="w-full">
+      </button>
+
+    </form>
+  </p-card>
+</div>
