@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ScrumBoard.Application.Auth;
 using ScrumBoard.Application.Ports;
+using ScrumBoard.Application.Projects;
 
 namespace ScrumBoard.Application.DependencyInjection;
 
@@ -14,6 +15,7 @@ public static class ApplicationServiceCollectionExtensions
         
         // 1. Services 
         services.AddScoped<AuthService>();
+        services.AddScoped<ProjectService>();
         
         return services;
     }
