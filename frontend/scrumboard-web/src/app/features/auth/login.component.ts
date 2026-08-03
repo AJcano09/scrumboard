@@ -21,8 +21,9 @@ import {Router} from "@angular/router";
   }
 )
 export class LoginComponent {
+
   form =this.fb.group({
-    email:['', Validators.required, Validators.email],
+    email:['', [Validators.required, Validators.email]],
     password:['', Validators.required]
   });
 
@@ -35,7 +36,7 @@ export class LoginComponent {
               ) {
   }
 
-  submit():void{
+  onsubmit():void{
     if(this.form.invalid){
       this.form.markAllAsTouched();
       return;
