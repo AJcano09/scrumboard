@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
+using ScrumBoard.Domain.Enums;
 using ScrumBoard.Infrastructure.Persistence;
 
 namespace ScrumBoard.Infrastructure.Seeders
@@ -36,25 +37,50 @@ namespace ScrumBoard.Infrastructure.Seeders
                 await context.Users.AddAsync(adminUser);
                 await context.Users.AddAsync(adminUser2);
 
-                var projectId = Guid.NewGuid();
-                var sampleProject = new Project
+                var project1Id = Guid.NewGuid();
+                var project2Id = Guid.NewGuid();
+                var project3Id = Guid.NewGuid();
+                var sampleProjects = new List<Project>
                 {
-                    Id = projectId,
-                    Name = "Proyecto de Ejemplo",
-                    Description = "Este es un proyecto inicial generado automáticamente.",
-                    Order = 1,
-                    StartDate = DateTime.UtcNow,
-                    EndDate = DateTime.UtcNow.AddMonths(1),
-                    Status = true
+                    new Project
+                    {
+                        Id = project1Id, 
+                        Name = "Sistema Scrum Principal",
+                        Description = "Este es un proyecto inicial generado automáticamente.",
+                        Order = 1,
+                        StartDate = DateTime.UtcNow,
+                        EndDate = DateTime.UtcNow.AddMonths(1),
+                        Status = ProjectStatus.Pending 
+                    },
+                    new Project
+                    {
+                        Id = project2Id,
+                        Name = "Migración a la Nube",
+                        Description = "Proyecto planeado para la siguiente fase.",
+                        Order = 2,
+                        StartDate = DateTime.UtcNow.AddMonths(1),
+                        EndDate = DateTime.UtcNow.AddMonths(3),
+                        Status = ProjectStatus.InProgres 
+                    },
+                    new Project
+                    {
+                        Id = project3Id,
+                        Name = "Auditoría de Código",
+                        Description = "Proyecto completado exitosamente.",
+                        Order = 3,
+                        StartDate = DateTime.UtcNow.AddMonths(-2),
+                        EndDate = DateTime.UtcNow.AddMonths(-1),
+                        Status = ProjectStatus.Completed
+                    }
                 };
 
-                await context.Projects.AddAsync(sampleProject);
+                await context.Projects.AddRangeAsync(sampleProjects);
 
                 var columns = new List<Column>
                 {
-                    new Column { Id = Guid.NewGuid(), Name = "To Do", Order = 1, ProjectId = projectId },
-                    new Column { Id = Guid.NewGuid(), Name = "In Progress", Order = 2, ProjectId = projectId },
-                    new Column { Id = Guid.NewGuid(), Name = "Done", Order = 3, ProjectId = projectId }
+                    new Column { Id = Guid.NewGuid(), Name = "To Do", Order = 1, ProjectId = project1Id },
+                    new Column { Id = Guid.NewGuid(), Name = "In Progress", Order = 2, ProjectId = project2Id },
+                    new Column { Id = Guid.NewGuid(), Name = "Done", Order = 3, ProjectId = project3Id }
                 };
 
                 await context.Columns.AddRangeAsync(columns);
