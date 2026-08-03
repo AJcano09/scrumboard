@@ -38,12 +38,14 @@ public sealed class ProjectStatus(string name, int value)
         };
     }
 
-    public static ProjectStatus ValidateAndParseStatus(string name, DateTime startDate, DateTime endDate,
+    public static ProjectStatus ValidateAndParseStatus(string name,string description, DateTime startDate, DateTime endDate,
         string status)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ProjectValidationException("El nombre del proyecto es obligatorio.");
 
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ProjectValidationException("La descripción del proyecto es obligatoria.");
         if (endDate < startDate)
             throw new ProjectValidationException("La fecha de fin no puede ser anterior a la fecha de inicio.");
 

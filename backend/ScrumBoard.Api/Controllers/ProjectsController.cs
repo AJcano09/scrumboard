@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ScrumBoard.Application.Common;
 using ScrumBoard.Application.Projects;
 using ScrumBoard.Domain.Entities;
 
@@ -12,7 +13,7 @@ public class ProjectsController(ProjectService projectService) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<ActionResult<List<ProjectDto>>> GetPaged(
+    public async Task<ActionResult<PagedResult<ProjectDto>>> GetPaged(
         [FromQuery] string? search,
         [FromQuery] int pageNumber,
         [FromQuery] int pageSize)
