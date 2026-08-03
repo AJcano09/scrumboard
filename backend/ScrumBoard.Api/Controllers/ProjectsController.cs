@@ -12,7 +12,7 @@ public class ProjectsController(ProjectService projectService) : ControllerBase
 {
 
     [HttpGet]
-    public async Task<ActionResult<List<Project>>> GetPaged(
+    public async Task<ActionResult<List<ProjectDto>>> GetPaged(
         [FromQuery] string? search,
         [FromQuery] int pageNumber,
         [FromQuery] int pageSize)
