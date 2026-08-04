@@ -1,3 +1,4 @@
+using ScrumBoard.Application.Common;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Exceptions;
 using ScrumBoard.Domain.Services;
@@ -33,7 +34,7 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
 
         await taskRepository.AddAsync(task);
         var dto =await ToDtoAsync(task);
-        await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, "taskCreated", dto);
+        await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, BoardHubEvents.TaskCreated, dto);
         return  dto;
     }
 
@@ -56,7 +57,7 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         var column = await columnRepository.GetByIdAsync(task.ColumnId);
         if (column is not null)
         {
-            await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, "taskUpdated", dto);
+            await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, BoardHubEvents.TaskUpdated, dto);
         }
 
         return dto;
@@ -76,7 +77,7 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         if (projectId != Guid.Empty)
         {
             // Notificamos pasando únicamente el Id de la tarea eliminada
-            await realtimeNotifier.NotifyBoardChangedAsync(projectId, "taskDeleted", new { Id = id });
+            await realtimeNotifier.NotifyBoardChangedAsync(projectId, BoardHubEvents.TaskDeleted, new { Id = id });
         }
 
         return true;
@@ -108,7 +109,7 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         var dto = await ToDtoAsync(task);
 
         // La columna destino ya fue cargada, usamos su ProjectId
-        await realtimeNotifier.NotifyBoardChangedAsync(targetColumn.ProjectId, "taskMoved", dto);
+        await realtimeNotifier.NotifyBoardChangedAsync(targetColumn.ProjectId, BoardHubEvents.TaskMoved, dto);
         
         return dto;
     }

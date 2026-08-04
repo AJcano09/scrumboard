@@ -1,3 +1,4 @@
+using ScrumBoard.Application.Common;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
 using ScrumBoard.Domain.Exceptions;
@@ -34,7 +35,7 @@ public class ColumnService(IColumnRepository columnRepository, IProjectRepositor
 
         await columnRepository.AddAsync(column);
         var dto = ToDto(column);
-        await realtimeNotifier.NotifyBoardChangedAsync(projectId, "columnCreated", dto);
+        await realtimeNotifier.NotifyBoardChangedAsync(projectId, BoardHubEvents.ColumnCreated, dto);
         
         return dto;
     }
@@ -50,7 +51,7 @@ public class ColumnService(IColumnRepository columnRepository, IProjectRepositor
         column.Name = request.Name.Trim();
         await columnRepository.UpdateAsync(column);
         var dto = ToDto(column);
-        await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, "columnUpdated", dto);
+        await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, BoardHubEvents.ColumnUpdated, dto);
 
         return dto;
     }
@@ -68,7 +69,7 @@ public class ColumnService(IColumnRepository columnRepository, IProjectRepositor
         await columnRepository.DeleteAsync(id);
         if (projectId != Guid.Empty)
         {
-            await realtimeNotifier.NotifyBoardChangedAsync(projectId, "columnDeleted", new { Id = id });
+            await realtimeNotifier.NotifyBoardChangedAsync(projectId, BoardHubEvents.ColumnDeleted, new { Id = id });
         }
         return true;
     }
@@ -91,7 +92,7 @@ public class ColumnService(IColumnRepository columnRepository, IProjectRepositor
         }
 
         var dtos= existing.OrderBy(c => c.Order).Select(ToDto).ToList();
-        await realtimeNotifier.NotifyBoardChangedAsync(projectId, "columnsReordered", dtos);
+        await realtimeNotifier.NotifyBoardChangedAsync(projectId, BoardHubEvents.ColumnMoved, dtos);
         return dtos;
     }
 

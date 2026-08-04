@@ -43,12 +43,12 @@
 
 ## Día 2 — Vie 31 jul (Autenticación)
 
-- [ ] Implementar hash de contraseñas (salt + pepper) en `Infrastructure` detrás del puerto `IPasswordHasher`.
-- [ ] Confirmar que el seeder crea los 2 usuarios con contraseña ya hasheada.
-- [ ] Emisión y validación de JWT (endpoint `POST /api/auth/login`), configuración de clave/secret vía variable de entorno.
-- [ ] Middleware/atributos de autorización en todos los endpoints de negocio.
-- [ ] **Frontend:** pantalla de login (formulario + validaciones básicas con PrimeNG).
-- [ ] **Frontend:** guard de ruta que bloquea el tablero sin sesión válida.
+- [x] Implementar hash de contraseñas (salt + pepper) en `Infrastructure` detrás del puerto `IPasswordHasher`.
+- [x] Confirmar que el seeder crea los 2 usuarios con contraseña ya hasheada.
+- [x] Emisión y validación de JWT (endpoint `POST /api/auth/login`), configuración de clave/secret vía variable de entorno.
+- [x] Middleware/atributos de autorización en todos los endpoints de negocio.
+- [] **Frontend:** pantalla de login (formulario + validaciones básicas con PrimeNG).
+- [] **Frontend:** guard de ruta que bloquea el tablero sin sesión válida.
 - [ ] **Frontend:** interceptor HTTP que adjunta el token y gestiona la respuesta 401 (logout + redirección a login).
 - [ ] Commits atómicos por hito (backend auth, frontend login, guard/interceptor).
 

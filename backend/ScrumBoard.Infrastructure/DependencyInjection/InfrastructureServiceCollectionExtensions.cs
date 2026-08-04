@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ScrumBoard.Application.Auth;
 using ScrumBoard.Application.Ports;
+using ScrumBoard.Application.Reports;
 using ScrumBoard.Infrastructure.Persistence;
+using ScrumBoard.Infrastructure.Reports;
 using ScrumBoard.Infrastructure.Repositories;
 using ScrumBoard.Infrastructure.Security;
 using ScrumBoard.Infrastructure.Seeders;
@@ -52,7 +54,10 @@ namespace ScrumBoard.Infrastructure.DependencyInjection
             
             // 4.services
             services.AddScoped<ITokenService, JwtTokenService>();
-           
+            services.AddScoped<IProjectReportQuery, ProjectReportQuery>();
+            // Patrón de estrategia: registramos ambos exportadores bajo la misma interfaz
+            services.AddScoped<IReportExporter, PdfReportExporter>();
+            services.AddScoped<IReportExporter, ExcelReportExporter>();
             // 5.options
             
             services.Configure<JwtSettings>(configuration.GetSection("Jwt:JwtSettings"));
