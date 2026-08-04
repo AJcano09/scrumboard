@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
       target: development
     image: scrumboard-web-dev
-    command: ["sh", "-c", "npm install && npx ng serve --host 0.0.0.0 --poll 1000 --port 4200 --proxy-config proxy.conf.json"]
+    command: ["sh", "-c", "npm install && npx ng serve --host 0.0.0.0 --poll 1000 --port 4200 --proxy-config proxy.conf.docker.json"]
     ports:
       - "${WEB_PORT:-4201}:4200"
     volumes:

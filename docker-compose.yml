@@ -28,6 +28,9 @@ services:
       Jwt__JwtSettings__Audience: ${Jwt__JwtSettings__Audience:-ScrumBoardClient}
       Jwt__JwtSettings__ExpirationMinutes: ${Jwt__JwtSettings__ExpirationMinutes:-60}
       Security__Pepper: ${Security__Pepper:-change-me-in-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   web:
     build:
@@ -35,6 +38,9 @@ services:
       dockerfile: Dockerfile
     environment:
       API_URL: ${API_URL:-http://localhost:5001/api}
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   postgres_data:
