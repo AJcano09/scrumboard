@@ -269,7 +269,10 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
 
   loadUsers(): void {
     this.boardService.getUsers(1, 100).subscribe({
-      next: (response) => (this.users = response.items),
+      next: (response) => {
+        console.log('Users loaded:', response.items);
+        this.users = response.items;
+      },
       error: () => this.showError(null, 'No se pudieron cargar los usuarios.')
     });
   }
@@ -295,6 +298,7 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
   save(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const value = this.form.getRawValue();
+    console.log('save form:', value, 'users:', this.users);
 
     const request$ = this.editingTask
       ? this.boardService.updateTask(this.editingTask.id, {
