@@ -3,7 +3,8 @@ using ScrumBoard.Domain.Exceptions;
 using ScrumBoard.Domain.Services;
 
 namespace ScrumBoard.Application.Tasks;
-public class TaskService(ITaskRepository taskRepository, IColumnRepository columnRepository)
+public class TaskService(ITaskRepository taskRepository, IColumnRepository columnRepository
+,IRealtimeNotifier realtimeNotifier)
 {
     private static readonly string[] ValidPriorities = ["Baja", "Media", "Alta"];
 
@@ -31,7 +32,9 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         };
 
         await taskRepository.AddAsync(task);
-        return await ToDtoAsync(task);
+        var dto =await ToDtoAsync(task);
+        await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, "taskCreated", dto);
+        return  dto;
     }
 
     public async Task<TaskDto?> UpdateAsync(Guid id, UpdateTaskRequest request)
@@ -47,7 +50,16 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         task.ResponsibleId = request.ResponsibleId;
 
         await taskRepository.UpdateAsync(task);
-        return await ToDtoAsync(task);
+        var dto = await ToDtoAsync(task);
+
+        // Obtenemos el ProjectId a través de la columna de la tarea
+        var column = await columnRepository.GetByIdAsync(task.ColumnId);
+        if (column is not null)
+        {
+            await realtimeNotifier.NotifyBoardChangedAsync(column.ProjectId, "taskUpdated", dto);
+        }
+
+        return dto;
     }
 
     public async Task<bool> DeleteAsync(Guid id)
@@ -55,7 +67,18 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         var task = await taskRepository.GetByIdAsync(id);
         if (task is null) return false;
 
+        // Recuperamos el ProjectId antes de eliminar la tarea
+        var column = await columnRepository.GetByIdAsync(task.ColumnId);
+        var projectId = column?.ProjectId ?? Guid.Empty;
+
         await taskRepository.DeleteAsync(id);
+
+        if (projectId != Guid.Empty)
+        {
+            // Notificamos pasando únicamente el Id de la tarea eliminada
+            await realtimeNotifier.NotifyBoardChangedAsync(projectId, "taskDeleted", new { Id = id });
+        }
+
         return true;
     }
 
@@ -82,7 +105,12 @@ public class TaskService(ITaskRepository taskRepository, IColumnRepository colum
         task.ColumnId = request.TargetColumnId;
 
         await taskRepository.UpdateAsync(task);
-        return await ToDtoAsync(task);
+        var dto = await ToDtoAsync(task);
+
+        // La columna destino ya fue cargada, usamos su ProjectId
+        await realtimeNotifier.NotifyBoardChangedAsync(targetColumn.ProjectId, "taskMoved", dto);
+        
+        return dto;
     }
 
     private static void Validate(string title, string priority)
