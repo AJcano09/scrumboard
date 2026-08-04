@@ -18,6 +18,7 @@ import {BoardColumn, BoardTask, TaskPriority, User} from "../../board/models/boa
 import {BoardService} from "../../board/services/board.service";
 import {ActivatedRoute} from "@angular/router";
 import {MessageService, ConfirmationService} from "primeng/api";
+import {ProjectService} from "../services/project.service";
 
 @Component({
   selector: 'app-project-board',
@@ -43,6 +44,7 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
   isDownloadingExcel = false;
 
   columns: BoardColumn[] = [];
+  projectName: string | null = null;
   isLoading:boolean = false;
 
   dialogVisible = false;
@@ -66,6 +68,7 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
   constructor(
     private fb: FormBuilder,
     private boardService: BoardService,
+    private projectService: ProjectService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private route: ActivatedRoute
@@ -238,6 +241,15 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
           console.error('Error al cargar la estructura del tablero:', err);
         }
       });
+
+    this.projectService.getById(this.projectId).subscribe({
+      next: (project) => {
+        this.projectName = project.name;
+      },
+      error: (err) => {
+        console.error('Error al cargar el nombre del proyecto:', err);
+      }
+    });
   }
 
   private sortColumnTasks(column: BoardColumn): void {

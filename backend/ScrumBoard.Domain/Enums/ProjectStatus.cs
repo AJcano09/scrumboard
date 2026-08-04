@@ -1,6 +1,3 @@
-using System.Runtime.CompilerServices;
-using ScrumBoard.Application.Projects;
-
 namespace ScrumBoard.Domain.Enums;
 
 public sealed class ProjectStatus(string name, int value)

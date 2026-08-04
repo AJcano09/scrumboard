@@ -16,6 +16,7 @@ export interface LoginResponse{
 @Injectable({providedIn: 'root'})
 export class AuthService {
   private readonly tokenSignal = signal<string|null>(this.getInitialToken());
+  private readonly userNameSignal = signal<string | null>(this.getInitialUserName());
   constructor(private http: HttpClient,
               private router: Router,) {}
 
@@ -23,13 +24,15 @@ export class AuthService {
     console.log(`${environment.apiUrl}${ApiRoutes.Auth.Login}`);
     return this.http
       .post<LoginResponse>(`${environment.apiUrl}${ApiRoutes.Auth.Login}`, {email, password})
-      .pipe(tap(res => this.setToken(res.token)));
+      .pipe(tap(res => this.setToken(res.token, res.name)));
 
   }
 
   logout():void{
     localStorage.removeItem(StorageKeys.AuthToken);
-    this.tokenSignal.set(null)
+    localStorage.removeItem(StorageKeys.UserName);
+    this.tokenSignal.set(null);
+    this.userNameSignal.set(null);
     this.router.navigate(['/login']);
   }
 
@@ -41,15 +44,30 @@ export class AuthService {
     return this.tokenSignal();
   }
 
-  private setToken(token:string){
-    localStorage.setItem(StorageKeys.AuthToken, token);
-    this.tokenSignal.set(token);
+  getUserName(): string | null {
+    return this.userNameSignal();
   }
 
-  private getInitialToken(): string | null{
-   if(typeof window !== 'undefined') {
-     return localStorage.getItem(StorageKeys.AuthToken);
-   }
-     return null;
+  private setToken(token:string, userName?: string){
+    localStorage.setItem(StorageKeys.AuthToken, token);
+    this.tokenSignal.set(token);
+    if (userName) {
+      localStorage.setItem(StorageKeys.UserName, userName);
+      this.userNameSignal.set(userName);
+    }
+  }
+
+  private getInitialToken(): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(StorageKeys.AuthToken);
+    }
+    return null;
+  }
+
+  private getInitialUserName(): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(StorageKeys.UserName);
+    }
+    return null;
   }
 }

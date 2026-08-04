@@ -4,6 +4,7 @@ import {ReportService} from "../../reports/services/report.service";
 import {BoardService} from "../../board/services/board.service";
 import {BoardHubService} from "../../../core/realtime/board-hub.service";
 import {ActivatedRoute} from "@angular/router";
+import {ProjectService} from "../services/project.service";
 import {By} from "@angular/platform-browser";
 import {of} from "rxjs";
 
@@ -12,12 +13,14 @@ describe('ProjectBoardComponent', () => {
   let fixture: ComponentFixture<ProjectBoardComponent>;
   let reportServiceSpy: jasmine.SpyObj<ReportService>;
   let boardServiceSpy: jasmine.SpyObj<BoardService>;
+  let projectServiceSpy: jasmine.SpyObj<ProjectService>;
   let boardHubServiceSpy: jasmine.SpyObj<BoardHubService>;
 
   beforeEach(async () => {
     // Mock de los servicios para no hacer peticiones reales
     const reportSpy = jasmine.createSpyObj('ReportService', ['downloadProjectReport']);
     const boardSpy = jasmine.createSpyObj('BoardService', ['getBoard', 'getUsers']);
+    const projectSpy = jasmine.createSpyObj('ProjectService', ['getById']);
     const hubSpy = jasmine.createSpyObj('BoardHubService', ['joinBoard', 'leaveBoard'], {
       taskCreated$: of(),
       taskUpdated$: of(),
@@ -32,12 +35,14 @@ describe('ProjectBoardComponent', () => {
 
     boardSpy.getBoard.and.returnValue(of({ projectId: '12345', columns: [] }));
     boardSpy.getUsers.and.returnValue(of({ items: [], totalCount: 0 }));
+    projectSpy.getById.and.returnValue(of({ id: '12345', name: 'Proyecto Test', description: '', startDate: '', endDate: '', status: 'InProgress' }));
 
     await TestBed.configureTestingModule({
       imports: [ProjectBoardComponent],
       providers: [
         { provide: ReportService, useValue: reportSpy },
         { provide: BoardService, useValue: boardSpy },
+        { provide: ProjectService, useValue: projectSpy },
         { provide: BoardHubService, useValue: hubSpy },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '12345' } } } }
       ]
@@ -46,6 +51,7 @@ describe('ProjectBoardComponent', () => {
     fixture = TestBed.createComponent(ProjectBoardComponent);
     component = fixture.componentInstance;
     reportServiceSpy = TestBed.inject(ReportService) as jasmine.SpyObj<ReportService>;
+    projectServiceSpy = TestBed.inject(ProjectService) as jasmine.SpyObj<ProjectService>;
 
     // Los mocks ya retornan observables por defecto; detectChanges dispara ngOnInit
     fixture.detectChanges();
@@ -58,6 +64,17 @@ describe('ProjectBoardComponent', () => {
     expect(buttons.length).toBeGreaterThanOrEqual(2);
     expect(buttons[0].nativeElement.textContent).toContain('Exportar PDF');
     expect(buttons[1].nativeElement.textContent).toContain('Exportar Excel');
+  });
+
+  // Prueba 3b: Renderizado del nombre del proyecto
+  it('Debe mostrar el nombre del proyecto en el encabezado del tablero', () => {
+    const header = fixture.debugElement.query(By.css('h2'));
+    expect(header.nativeElement.textContent).toContain('Proyecto Test');
+  });
+
+  // Prueba 3c: Llamada al servicio de proyectos
+  it('Debe llamar a ProjectService.getById al inicializar', () => {
+    expect(projectServiceSpy.getById).toHaveBeenCalledWith('12345');
   });
 
   // Prueba 4: Gestión de estado durante la descarga

@@ -18,6 +18,10 @@ export class ProjectService{
     return this.http.get<PagedResult<Project>>(`${environment.apiUrl}${ApiRoutes.Projects.GetPaged}`, { params });
   }
 
+  getById(id: string): Observable<Project> {
+    return this.http.get<Project>(`${environment.apiUrl}${ApiRoutes.Projects.GetById(id)}`);
+  }
+
   create(request: ProjectFormValue): Observable<Project> {
     return this.http.post<Project>(`${environment.apiUrl}${ApiRoutes.Projects.Create}`, request);
   }
