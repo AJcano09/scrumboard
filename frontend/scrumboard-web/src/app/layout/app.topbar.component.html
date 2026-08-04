@@ -12,16 +12,6 @@
         <i class="pi pi-ellipsis-v"></i>
     </button>
 
-    <div class="layout-topbar-user" style="display: flex; align-items: center; gap: 0.5rem;">
-        <span *ngIf="userName" class="font-medium">{{ userName }}</span>
-        <button pButton type="button" icon="pi pi-sign-out"
-                class="p-button-text p-button-sm p-button-danger"
-                (click)="onLogout()"
-                tooltipPosition="bottom"
-                pTooltip="Cerrar sesión">
-        </button>
-    </div>
-
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button">
             <i class="pi pi-calendar"></i>
@@ -34,6 +24,11 @@
         <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
             <i class="pi pi-cog"></i>
             <span>Settings</span>
+        </button>
+        <button class="p-link layout-topbar-button" (click)="onLogout()">
+            <i class="pi pi-sign-out"></i>
+            <span *ngIf="userName">{{ userName }}</span>
+            <span *ngIf="!userName">Logout</span>
         </button>
     </div>
 </div>
