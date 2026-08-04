@@ -19,6 +19,7 @@ public static class AuthenticationServiceCollectionExtensions
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
 
         var jwtSettings = configuration.GetSection("Jwt:JwtSettings").Get<JwtSettings>()!;

@@ -1,4 +1,4 @@
-import {Component, inject, Input, OnDestroy, OnInit} from "@angular/core";
+import {Component, inject, Input, OnDestroy, OnInit, QueryList, ViewChildren} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DragDropModule} from "primeng/dragdrop";
@@ -46,6 +46,8 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
   columns: BoardColumn[] = [];
   projectName: string | null = null;
   isLoading:boolean = false;
+
+  @ViewChildren(CdkDropList) dropLists!: QueryList<CdkDropList>;
 
   dialogVisible = false;
   editingTask: BoardTask | null = null;
@@ -340,8 +342,8 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
     }
   }
 
-  connectedLists(): string[] {
-    return this.columns.map(c => c.id);
+  connectedLists(): CdkDropList[] {
+    return this.dropLists ? this.dropLists.toArray() : [];
   }
 
   // --- Drag & drop: actualización optimista + reversión en error ---
