@@ -1,7 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using ScrumBoard.Application.Auth;
+using ScrumBoard.Application.Board;
 using ScrumBoard.Application.Columns;
 using ScrumBoard.Application.Projects;
+using ScrumBoard.Application.Tasks;
+using ScrumBoard.Application.Users;
 
 namespace ScrumBoard.Application.DependencyInjection;
 
@@ -17,6 +20,9 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<AuthService>();
         services.AddScoped<ProjectService>();
         services.AddScoped<ColumnService>();
+        services.AddScoped<TaskService>();
+        services.AddScoped<BoardService>();
+        services.AddScoped<UserService>();
         return services;
     }
 }

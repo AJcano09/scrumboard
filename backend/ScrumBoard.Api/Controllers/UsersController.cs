@@ -8,5 +8,9 @@ namespace ScrumBoard.Api.Controllers;
 public class UsersController(UserService userService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll(int page, int pageSize) => Ok(await userService.GetAllPagedAsync(page,pageSize));
+    public async Task<IActionResult> GetAllPagedAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var pagedResult = await userService.GetAllPagedAsync(pageNumber, pageSize);
+        return Ok(pagedResult);
+    }
 }
