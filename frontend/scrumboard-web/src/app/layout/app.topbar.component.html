@@ -15,8 +15,8 @@
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button" (click)="onLogout()">
             <i class="pi pi-sign-out"></i>
-            <span *ngIf="userName" class="font-bold">{{ userName }}</span>
-            <span *ngIf="!userName">Logout</span>
+            <span *ngIf="auth.userName()" class="font-bold">{{ auth.userName() }}</span>
+            <span *ngIf="!auth.userName()">Logout</span>
         </button>
     </div>
 </div>

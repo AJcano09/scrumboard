@@ -17,6 +17,7 @@ export interface LoginResponse{
 export class AuthService {
   private readonly tokenSignal = signal<string|null>(this.getInitialToken());
   private readonly userNameSignal = signal<string | null>(this.getInitialUserName());
+  readonly userName = this.userNameSignal;
   constructor(private http: HttpClient,
               private router: Router,) {}
 

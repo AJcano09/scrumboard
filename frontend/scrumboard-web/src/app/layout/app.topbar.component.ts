@@ -22,10 +22,6 @@ export class AppTopBarComponent {
         public auth: AuthService
     ) { }
 
-    get userName(): string | null {
-        return this.auth.getUserName();
-    }
-
     onLogout(): void {
         this.auth.logout();
     }
