@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Api", "ScrumBoard.Api\ScrumBoard.Api.csproj", "{3ADF28CD-D2A1-486D-B229-9BDDB85FB551}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Domain.Tests", "ScrumBoard.Domain.Tests\ScrumBoard.Domain.Tests.csproj", "{27BE9129-9041-450D-AAEC-74DFFF0B18D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3ADF28CD-D2A1-486D-B229-9BDDB85FB551}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ADF28CD-D2A1-486D-B229-9BDDB85FB551}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3ADF28CD-D2A1-486D-B229-9BDDB85FB551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
