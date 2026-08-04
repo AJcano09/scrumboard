@@ -32,7 +32,7 @@ describe('ReportService', () => {
       expect(response instanceof Blob).toBeTrue();
     });
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/api/projects/${mockProjectId}/reports/PDF`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/projects/${mockProjectId}/reports/PDF`);
     expect(req.request.method).toBe('GET');
     expect(req.request.responseType).toBe('blob');
 
@@ -44,7 +44,7 @@ describe('ReportService', () => {
   it('Debe construir correctamente la URL al solicitar el formato EXCEL', () => {
     service.downloadProjectReport(mockProjectId, 'EXCEL').subscribe();
 
-    const req = httpMock.expectOne(`${environment.apiUrl}/api/projects/${mockProjectId}/reports/EXCEL`);
+    const req = httpMock.expectOne(`${environment.apiUrl}/projects/${mockProjectId}/reports/EXCEL`);
     expect(req.request.method).toBe('GET');
 
     req.flush(new Blob(['excel content'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));

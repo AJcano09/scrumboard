@@ -8,7 +8,7 @@ import {Observable} from "rxjs";
 })
 export class ReportService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/api/projects`;
+  private apiUrl = `${environment.apiUrl}/projects`;
 
   downloadProjectReport(projectId: string, format: 'PDF' | 'EXCEL'): Observable<Blob> {
     const url = `${this.apiUrl}/${projectId}/reports/${format}`;
