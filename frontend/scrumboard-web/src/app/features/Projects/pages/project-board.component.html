@@ -1,0 +1,71 @@
+<header class="board-header">
+  <h2>Tablero del Proyecto</h2>
+
+  <div class="report-actions">
+    <button
+      class="btn btn-outline-danger"
+      (click)="downloadReport('PDF')"
+      [disabled]="isDownloadingPdf">
+      <i class="bi bi-file-earmark-pdf"></i>
+      {{ isDownloadingPdf ? 'Generando...' : 'Exportar PDF' }}
+    </button>
+
+    <button
+      class="btn btn-outline-success"
+      (click)="downloadReport('EXCEL')"
+      [disabled]="isDownloadingExcel">
+      <i class="bi bi-file-earmark-excel"></i>
+      {{ isDownloadingExcel ? 'Generando...' : 'Exportar Excel' }}
+    </button>
+  </div>
+</header>
+
+<!-- Indicador de carga -->
+<div *ngIf="isLoading" class="text-center p-4">
+  <p>Cargando tablero y tareas...</p>
+</div>
+
+<!-- Contenedor del Tablero Kanban -->
+<div class="kanban-board-container" *ngIf="!isLoading">
+  <div class="kanban-columns-wrapper" style="display: flex; gap: 1rem; overflow-x: auto; padding: 1rem 0;">
+
+    <div *ngFor="let column of columns" class="kanban-column" style="background: #f8f9fa; border-radius: 8px; padding: 1rem; min-width: 280px; flex: 1;">
+
+      <div class="column-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="margin: 0; font-size: 1.1rem;">{{ column.name }}</h3>
+        <span class="badge bg-secondary" style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+          {{ column.tasks.length }}
+        </span>
+      </div>
+
+      <!-- Lista de Tareas -->
+      <div
+        cdkDropList
+        [cdkDropListData]="column.tasks"
+        [cdkDropListConnectedTo]="connectedLists()"
+        (cdkDropListDropped)="onTaskDrop($event)"
+        class="tasks-container"
+        style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div *ngFor="let task of column.tasks" cdkDrag class="task-card" style="background: white; border-radius: 6px; padding: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">{{ task.title }}</h4>
+          <p style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: #6c757d;">{{ task.description }}</p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+            <span class="badge bg-info text-dark" style="padding: 0.2rem 0.4rem; border-radius: 3px;">
+              {{ task.priority }}
+            </span>
+            <span class="text-muted" *ngIf="task.responsibleName">
+              👤 {{ task.responsibleName }}
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="column.tasks.length === 0" style="text-align: center; color: #adb5bd; font-size: 0.85rem; padding: 1rem 0;">
+          No hay tareas
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
