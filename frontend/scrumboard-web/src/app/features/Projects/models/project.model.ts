@@ -22,10 +22,3 @@ export interface ProjectFormValue {
   status: ProjectStatus;
 }
 
-export interface PagedResult<T> {
-  items: T[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-}

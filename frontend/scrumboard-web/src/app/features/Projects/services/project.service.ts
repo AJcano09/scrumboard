@@ -1,9 +1,10 @@
 import {Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {PagedResult, Project, ProjectFormValue} from "../models/project.model";
+import { Project, ProjectFormValue} from "../models/project.model";
 import {environment} from "../../../../environments/environment";
 import {ApiRoutes} from "../../../core/constants/api.routes.constant";
+import {PagedResult} from "../../../core/Common/models/page.result.model";
 
 @Injectable({providedIn: 'root'})
 export class ProjectService{

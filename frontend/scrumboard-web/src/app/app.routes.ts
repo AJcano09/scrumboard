@@ -25,7 +25,7 @@ export const routes: Routes = [
       },
       {
         path:'board',
-        loadComponent:()=> import('./features/board/board.component')
+        loadComponent:()=> import('./features/board/pages/board.component')
           .then(m=> m.BoardComponent)
       },
       {

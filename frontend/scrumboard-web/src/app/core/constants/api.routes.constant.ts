@@ -11,8 +11,18 @@ export const ApiRoutes = {
     Update:(id:string) => `/projects/${id}`,
     Delete:(id: string) => `/projects/${id}`,
   },
+  Board: {
+    Get: (projectId: string) => `/projects/${projectId}/board`,
+  },
+  Tasks: {
+    Create: '/tasks',
+    Update: (id: string) => `/tasks/${id}`,
+    Delete: (id: string) => `/tasks/${id}`,
+    Move: (id: string) => `/tasks/${id}/move`,
+  },
   Users: {
-    Profile: '/users/profile'
+    Profile: '/users/profile',
+    GetAll: (pageNumber: number = 1, pageSize: number = 10) => `/users?pageNumber=${pageNumber}&pageSize=${pageSize}`,
   },
   Columns: {
     GetByProject: (projectId: string) => `/projects/${projectId}/columns`,
