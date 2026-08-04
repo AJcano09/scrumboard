@@ -37,6 +37,10 @@ export class AuthService {
     return !!this.tokenSignal();
   }
 
+  getToken(): string | null {
+    return this.tokenSignal();
+  }
+
   private setToken(token:string){
     localStorage.setItem(StorageKeys.AuthToken, token);
     this.tokenSignal.set(token);

@@ -46,7 +46,7 @@ export class LoginComponent {
 
     const {email, password} = this.form.getRawValue();
     this.auth.login(email!,password!).subscribe({
-      next: ()=> this.router.navigateByUrl('/board'),
+      next: ()=> this.router.navigateByUrl('/projects'),
       error:()=> {
         this.errorMessage = 'Credenciales inválidas';
         this.loading = false;

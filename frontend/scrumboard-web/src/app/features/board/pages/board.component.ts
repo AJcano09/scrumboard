@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
@@ -16,6 +16,8 @@ import {ActivatedRoute} from "@angular/router";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {Board, BoardTask, TaskPriority, User} from "../models/board.model";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
+import {Subscription} from "rxjs";
+import {BoardHubService} from "../../../core/realtime/board-hub.service";
 
 @Component({
   selector: "app-board",
@@ -27,16 +29,23 @@ import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} f
     InputTextareaModule, DropdownModule, TagModule, ToastModule, ConfirmDialogModule
 ,CdkDropList,CdkDrag
   ],
+  providers:[
+    ConfirmationService,MessageService
+  ],
   templateUrl: "./board.component.html",
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit, OnDestroy {
 
+  private  hubSubscriptions: Subscription[]=[];
   constructor(private boardService : BoardService,
               private route:ActivatedRoute,
               private fb:FormBuilder,
               private confirmationService:ConfirmationService,
-              private messageService:MessageService) {
+              private messageService:MessageService,
+              private boardHub:BoardHubService) {
   }
+
+
 
   projectId!: string;
   board: Board = { projectId: '', columns: [] };
@@ -58,12 +67,37 @@ export class BoardComponent implements OnInit {
     responsibleId: ['', Validators.required]
   })
     ngOnInit(): void {
-      this.projectId = this.route.snapshot.paramMap.get('id') ?? '';
+    console.log(this.route.snapshot.paramMap.get('projectId'));
+    console.log(this.route.snapshot.paramMap.get('id'));
+      this.projectId = this.route.snapshot.paramMap.get('projectId') ?? this.route.snapshot.paramMap.get('id') ?? '';
+      console.log(this.projectId);
+
       this.loadUsers();
       this.loadBoard();
+      this.connectRealtime();
     }
 
+  private async connectRealtime(): Promise<void> {
+    await this.boardHub.joinBoard(this.projectId);
 
+    this.hubSubscriptions.push(
+      // Eventos de Tareas
+      this.boardHub.taskCreated$.subscribe(() => this.loadBoard()),
+      this.boardHub.taskUpdated$.subscribe(() => this.loadBoard()),
+      this.boardHub.taskDeleted$.subscribe(() => this.loadBoard()),
+      this.boardHub.taskMoved$.subscribe(() => this.loadBoard()),
+
+      // Eventos de Columnas
+      this.boardHub.columnCreated$.subscribe(() => this.loadBoard()),
+      this.boardHub.columnUpdated$.subscribe(() => this.loadBoard()),
+      this.boardHub.columnDeleted$.subscribe(() => this.loadBoard()),
+      this.boardHub.columnMoved$.subscribe(() => this.loadBoard())
+    );
+  }
+  ngOnDestroy(): void {
+     this.hubSubscriptions.forEach(s=>s.unsubscribe());
+     this.boardHub.leaveBoard();
+  }
   loadBoard(): void {
     this.loading = true;
     this.boardService.getBoard(this.projectId).subscribe({

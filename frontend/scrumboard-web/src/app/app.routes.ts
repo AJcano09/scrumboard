@@ -14,9 +14,10 @@ export const routes: Routes = [
     canActivate:[authGuard],
     children: [
       {
-        path:'projects/:id/columns',
-        loadComponent:()=> import('./features/Columns/pages/columns.component')
-          .then(m=> m.ColumnsComponent)
+        path:'',
+        redirectTo: 'projects',
+        pathMatch: 'full'
+
       },
       {
         path: 'projects',
@@ -24,15 +25,18 @@ export const routes: Routes = [
           .then(m => m.ProjectsListComponent)
       },
       {
-        path:'board',
-        loadComponent:()=> import('./features/board/pages/board.component')
-          .then(m=> m.BoardComponent)
+        path: 'projects/:id/board',
+        loadComponent: () => import('./features/projects/pages/project-board.component')
+          .then(m => m.ProjectBoardComponent)
       },
       {
-        path:'',
-        redirectTo: 'board',
-        pathMatch: 'full'
-
+        path:'projects/:id/columns',
+        loadComponent:()=> import('./features/Columns/pages/columns.component')
+          .then(m=> m.ColumnsComponent)
+      },
+      {
+        path: '**',
+        redirectTo: 'projects'
       }
     ]
   }

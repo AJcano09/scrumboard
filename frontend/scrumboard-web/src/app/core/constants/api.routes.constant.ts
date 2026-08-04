@@ -22,7 +22,7 @@ export const ApiRoutes = {
   },
   Users: {
     Profile: '/users/profile',
-    GetAll: (pageNumber: number = 1, pageSize: number = 10) => `/users?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    GetAll: '/users',
   },
   Columns: {
     GetByProject: (projectId: string) => `/projects/${projectId}/columns`,

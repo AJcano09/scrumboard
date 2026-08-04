@@ -19,10 +19,7 @@ export class AppMenuComponent implements OnInit {
             items:[
               {
                 label:"Proyectos" , icon:'pi pi-fw pi-folder',routerLink: ['/projects']
-              },
-              {
-                label:"Tablero" , icon:'pi pi-fw pi-th-large',routerLink: ['/board']
-              },
+              }
             ]
           },
 

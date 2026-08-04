@@ -4,6 +4,7 @@
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
 
+
 <div class="card">
   <div class="flex justify-content-between align-items-center mb-3">
     <h5 class="m-0">Proyectos</h5>
@@ -51,10 +52,23 @@
         <td>{{ project.endDate | date: 'dd/MM/yyyy' }}</td>
         <td>{{ project.status }}</td>
         <td>
-          <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(project)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" (click)="confirmDelete(project)"></button>
-          <button pButton icon="pi pi-table" class="p-button-text p-button-sm"
-                  [routerLink]="['/projects', project.id, 'columns']" pTooltip="Columnas"></button>
+          <!-- Contenedor flex para alinear los botones en línea con separación -->
+          <div class="flex align-items-center gap-1">
+            <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(project)" pTooltip="Editar" tooltipPosition="top"></button>
+            <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" (click)="confirmDelete(project)" pTooltip="Eliminar" tooltipPosition="top"></button>
+
+            <!-- Botón para ir al Tablero Scrum -->
+            <p-button icon="pi pi-columns-2"
+                      styleClass="p-button-text p-button-sm"
+                      [routerLink]="['/projects', project.id, 'board']"
+                      pTooltip="Tablero"
+                      tooltipPosition="top">
+            </p-button>
+
+            <!-- Botón para ir a Columnas -->
+            <button pButton icon="pi pi-table" class="p-button-text p-button-sm"
+                    [routerLink]="['/projects', project.id, 'columns']" pTooltip="Columnas" tooltipPosition="top"></button>
+          </div>
         </td>
       </tr>
     </ng-template>
