@@ -9,6 +9,7 @@ namespace ScrumBoard.Infrastructure.Repositories
 
         public async Task<IEnumerable<Domain.Entities.Task>> GetByColumnIdAsync(Guid columnId) =>
             await _context.Tasks
+                .Include(t=>t.Responsible)
             .Where(t => t.ColumnId == columnId)
             .OrderBy(t => t.Order)
             .ToListAsync();
