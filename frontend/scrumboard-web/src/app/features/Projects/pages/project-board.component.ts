@@ -49,6 +49,8 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
 
   @ViewChildren(CdkDropList) dropLists!: QueryList<CdkDropList>;
 
+  hoveredColumnId: string | null = null;
+
   dialogVisible = false;
   editingTask: BoardTask | null = null;
   targetColumnIdForCreate = '';
@@ -344,6 +346,16 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
 
   connectedLists(): CdkDropList[] {
     return this.dropLists ? this.dropLists.toArray() : [];
+  }
+
+  onDropEnter(columnId: string): void {
+    this.hoveredColumnId = columnId;
+  }
+
+  onDropExit(columnId: string): void {
+    if (this.hoveredColumnId === columnId) {
+      this.hoveredColumnId = null;
+    }
   }
 
   // --- Drag & drop: actualización optimista + reversión en error ---

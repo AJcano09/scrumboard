@@ -32,7 +32,9 @@
 <div class="kanban-board-container" *ngIf="!isLoading" style="padding: 1rem;">
   <div class="kanban-columns-wrapper" style="display: flex; gap: 1rem; overflow-x: auto;">
 
-    <div *ngFor="let column of columns" class="kanban-column" style="background: #f8f9fa; border-radius: 8px; padding: 1rem; min-width: 280px; flex: 1;">
+    <div *ngFor="let column of columns" class="kanban-column"
+         [ngClass]="{'shadow-xl': hoveredColumnId === column.id}"
+         style="background: #f8f9fa; border-radius: 8px; padding: 1rem; min-width: 280px; flex: 1; transition: box-shadow 0.2s ease;">
 
       <div class="column-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
         <h3 style="margin: 0; font-size: 1.1rem;">{{ column.name }}</h3>
@@ -57,8 +59,11 @@
         [cdkDropListData]="column.tasks"
         [cdkDropListConnectedTo]="connectedLists()"
         (cdkDropListDropped)="onTaskDrop($event)"
+        (cdkDropListEntered)="onDropEnter(column.id)"
+        (cdkDropListExited)="onDropExit(column.id)"
         class="tasks-container"
-        style="display: flex; flex-direction: column; gap: 0.75rem;">
+        [ngClass]="{'border-2 border-primary': hoveredColumnId === column.id}"
+        style="display: flex; flex-direction: column; gap: 0.75rem; min-height: 60px;">
 
         <div *ngFor="let task of column.tasks" cdkDrag class="task-card" style="background: white; border-radius: 6px; padding: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
           <div style="display: flex; justify-content: space-between; align-items-start;">
