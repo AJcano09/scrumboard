@@ -1,0 +1,40 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="card">
+  <div class="flex align-items-center justify-content-between mb-3">
+    <h5 class="m-0">Columnas del proyecto</h5>
+    <a routerLink="/projects" class="p-button p-button-text"><i class="pi pi-arrow-left mr-2"></i> Volver a
+      proyectos</a>
+  </div>
+
+  <div class="flex gap-2 mb-4">
+    <input pInputText [(ngModel)]="newColumnName" placeholder="Nombre de la nueva columna" (keyup.enter)="add()"
+           class="flex-1"/>
+    <button pButton icon="pi pi-plus" label="Agregar" (click)="add()"></button>
+  </div>
+
+  <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="flex flex-column gap-2">
+    <div *ngFor="let column of columns" cdkDrag
+         class="flex align-items-center justify-content-between p-3 border-1 surface-border border-round">
+      <div class="flex align-items-center gap-2 flex-1">
+        <i class="pi pi-bars cursor-move text-color-secondary" cdkDragHandle></i>
+        <span *ngIf="editingId !== column.id">{{ column.name }}</span>
+        <input *ngIf="editingId === column.id" pInputText [(ngModel)]="editingName" (keyup.enter)="saveEdit(column)"
+               class="flex-1"/>
+      </div>
+      <div class="flex gap-1">
+        <ng-container *ngIf="editingId !== column.id; else editingActions">
+          <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="startEdit(column)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                  (click)="confirmDelete(column)"></button>
+        </ng-container>
+        <ng-template #editingActions>
+          <button pButton icon="pi pi-check" class="p-button-text p-button-sm" (click)="saveEdit(column)"></button>
+          <button pButton icon="pi pi-times" class="p-button-text p-button-sm" (click)="cancelEdit()"></button>
+        </ng-template>
+      </div>
+    </div>
+    <p *ngIf="!loading && columns.length === 0" class="text-color-secondary">No hay columnas todavía.</p>
+  </div>
+</div>

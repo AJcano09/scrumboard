@@ -53,6 +53,8 @@
         <td>
           <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(project)"></button>
           <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" (click)="confirmDelete(project)"></button>
+          <button pButton icon="pi pi-table" class="p-button-text p-button-sm"
+                  [routerLink]="['/projects', project.id, 'columns']" pTooltip="Columnas"></button>
         </td>
       </tr>
     </ng-template>

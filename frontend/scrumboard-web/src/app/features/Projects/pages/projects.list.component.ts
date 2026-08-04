@@ -14,6 +14,8 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {Project, ProjectStatus} from "../models/project.model";
 import {debounceTime, Subject} from "rxjs";
 import {ProjectService} from "../services/project.service";
+import {RouterLink} from "@angular/router";
+import {TooltipModule} from "primeng/tooltip";
 
 
 @Component(
@@ -24,7 +26,7 @@ import {ProjectService} from "../services/project.service";
       CommonModule,ReactiveFormsModule,TableModule,
       ButtonModule,DialogModule,InputTextModule,
       InputTextareaModule,CalendarModule,DropdownModule,
-      ConfirmDialogModule,ToastModule
+      ConfirmDialogModule,ToastModule,RouterLink,TooltipModule
     ],
     providers:[
       ConfirmationService,MessageService
