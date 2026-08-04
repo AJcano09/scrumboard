@@ -1,21 +1,24 @@
-<header class="board-header">
-  <h2>Tablero del Proyecto</h2>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
 
-  <div class="report-actions">
+<header class="board-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+  <h2 style="margin: 0;">Tablero del Proyecto</h2>
+
+  <div class="report-actions" style="display: flex; gap: 0.5rem;">
     <button
-      class="btn btn-outline-danger"
+      pButton type="button" icon="pi pi-file"
+      label="Exportar PDF"
       (click)="downloadReport('PDF')"
-      [disabled]="isDownloadingPdf">
-      <i class="bi bi-file-earmark-pdf"></i>
-      {{ isDownloadingPdf ? 'Generando...' : 'Exportar PDF' }}
+      [disabled]="isDownloadingPdf"
+      styleClass="p-button-outlined p-button-danger">
     </button>
 
     <button
-      class="btn btn-outline-success"
+      pButton type="button" icon="pi pi-file-excel"
+      label="Exportar Excel"
       (click)="downloadReport('EXCEL')"
-      [disabled]="isDownloadingExcel">
-      <i class="bi bi-file-earmark-excel"></i>
-      {{ isDownloadingExcel ? 'Generando...' : 'Exportar Excel' }}
+      [disabled]="isDownloadingExcel"
+      styleClass="p-button-outlined p-button-success">
     </button>
   </div>
 </header>
@@ -26,16 +29,26 @@
 </div>
 
 <!-- Contenedor del Tablero Kanban -->
-<div class="kanban-board-container" *ngIf="!isLoading">
-  <div class="kanban-columns-wrapper" style="display: flex; gap: 1rem; overflow-x: auto; padding: 1rem 0;">
+<div class="kanban-board-container" *ngIf="!isLoading" style="padding: 1rem;">
+  <div class="kanban-columns-wrapper" style="display: flex; gap: 1rem; overflow-x: auto;">
 
     <div *ngFor="let column of columns" class="kanban-column" style="background: #f8f9fa; border-radius: 8px; padding: 1rem; min-width: 280px; flex: 1;">
 
       <div class="column-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
         <h3 style="margin: 0; font-size: 1.1rem;">{{ column.name }}</h3>
-        <span class="badge bg-secondary" style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
-          {{ column.tasks.length }}
-        </span>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="p-tag p-tag-info" style="padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+            {{ column.tasks.length }}
+          </span>
+          <button
+            pButton type="button" icon="pi pi-plus"
+            class="p-button-text p-button-sm"
+            (click)="openCreateDialog(column.id)"
+            pTooltip="Nueva tarea"
+            tooltipPosition="top">
+          </button>
+        </div>
       </div>
 
       <!-- Lista de Tareas -->
@@ -46,15 +59,22 @@
         (cdkDropListDropped)="onTaskDrop($event)"
         class="tasks-container"
         style="display: flex; flex-direction: column; gap: 0.75rem;">
+
         <div *ngFor="let task of column.tasks" cdkDrag class="task-card" style="background: white; border-radius: 6px; padding: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">{{ task.title }}</h4>
+          <div style="display: flex; justify-content: space-between; align-items-start;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">{{ task.title }}</h4>
+            <div style="display: flex; gap: 0.25rem;">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(task)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" (click)="confirmDeleteTask(task)"></button>
+            </div>
+          </div>
+
           <p style="margin: 0 0 0.5rem 0; font-size: 0.85rem; color: #6c757d;">{{ task.description }}</p>
 
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
-            <span class="badge bg-info text-dark" style="padding: 0.2rem 0.4rem; border-radius: 3px;">
-              {{ task.priority }}
-            </span>
-            <span class="text-muted" *ngIf="task.responsibleName">
+            <p-tag [value]="task.priority" [severity]="priorityColor(task.priority)"></p-tag>
+
+            <span *ngIf="task.responsibleName" style="color: #6c757d;">
               👤 {{ task.responsibleName }}
             </span>
           </div>
@@ -69,3 +89,55 @@
 
   </div>
 </div>
+
+<!-- Diálogo de creación/edición de tareas -->
+<p-dialog
+  [(visible)]="dialogVisible"
+  [header]="editingTask ? 'Editar tarea' : 'Nueva tarea'"
+  [modal]="true"
+  [style]="{ width: '28rem' }">
+
+  <form [formGroup]="form" class="flex flex-column gap-3">
+    <div class="flex flex-column gap-2">
+      <label for="title">Título</label>
+      <input id="title" pInputText formControlName="title" />
+      <small class="p-error" *ngIf="form.get('title')?.touched && form.get('title')?.invalid">
+        El título es obligatorio (máx. 200 caracteres).
+      </small>
+    </div>
+
+    <div class="flex flex-column gap-2">
+      <label for="description">Descripción</label>
+      <textarea id="description" pInputTextarea formControlName="description" rows="3"></textarea>
+    </div>
+
+    <div class="flex flex-column gap-2">
+      <label for="priority">Prioridad</label>
+      <p-dropdown
+        inputId="priority"
+        formControlName="priority"
+        [options]="priorityOptions"
+        placeholder="Seleccionar prioridad"
+        optionLabel="label"
+        optionValue="value">
+      </p-dropdown>
+    </div>
+
+    <div class="flex flex-column gap-2">
+      <label for="responsible">Responsable</label>
+      <p-dropdown
+        inputId="responsible"
+        formControlName="responsibleId"
+        [options]="users"
+        placeholder="Seleccionar responsable"
+        optionLabel="name"
+        optionValue="id">
+      </p-dropdown>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancelar" class="p-button-text" (click)="dialogVisible = false"></button>
+    <button pButton label="Guardar" (click)="save()" [disabled]="form.invalid"></button>
+  </ng-template>
+</p-dialog>

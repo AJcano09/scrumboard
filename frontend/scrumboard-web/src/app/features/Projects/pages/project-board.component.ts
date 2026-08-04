@@ -1,18 +1,35 @@
 import {Component, inject, Input, OnDestroy, OnInit} from "@angular/core";
 import {CommonModule} from "@angular/common";
+import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DragDropModule} from "primeng/dragdrop";
+import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
+import {InputTextModule} from "primeng/inputtext";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {DropdownModule} from "primeng/dropdown";
+import {TagModule} from "primeng/tag";
+import {ToastModule} from "primeng/toast";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {CdkDrag, CdkDropList, CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {ReportService} from "../../reports/services/report.service";
 import {finalize, Subscription} from "rxjs";
 import {BoardHubService} from "../../../core/realtime/board-hub.service";
-import {BoardColumn, BoardTask} from "../../board/models/board.model";
+import {BoardColumn, BoardTask, TaskPriority, User} from "../../board/models/board.model";
 import {BoardService} from "../../board/services/board.service";
 import {ActivatedRoute} from "@angular/router";
+import {MessageService, ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-project-board',
   standalone: true,
-  imports: [CommonModule, DragDropModule, CdkDropList, CdkDrag],
+  imports: [
+    CommonModule, ReactiveFormsModule, DragDropModule,
+    ButtonModule, DialogModule, InputTextModule,
+    InputTextareaModule, DropdownModule, TagModule,
+    ToastModule, ConfirmDialogModule,
+    CdkDropList, CdkDrag
+  ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './project-board.component.html'
 })
 export class ProjectBoardComponent implements  OnInit, OnDestroy{
@@ -28,8 +45,31 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
   columns: BoardColumn[] = [];
   isLoading:boolean = false;
 
-  constructor(private boardService:BoardService,
-              private route: ActivatedRoute) {
+  dialogVisible = false;
+  editingTask: BoardTask | null = null;
+  targetColumnIdForCreate = '';
+  users: User[] = [];
+
+  priorityOptions: { label: string; value: TaskPriority }[] = [
+    { label: 'Baja', value: 'Baja' },
+    { label: 'Media', value: 'Media' },
+    { label: 'Alta', value: 'Alta' }
+  ];
+
+  form = this.fb.group({
+    title: ['', [Validators.required, Validators.maxLength(200)]],
+    description: ['', Validators.maxLength(1000)],
+    priority: ['Media' as TaskPriority, Validators.required],
+    responsibleId: ['', Validators.required]
+  });
+
+  constructor(
+    private fb: FormBuilder,
+    private boardService: BoardService,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private route: ActivatedRoute
+  ) {
   }
 
   ngOnInit(): void {
@@ -41,6 +81,7 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
     }
 
     this.loadBoardData();
+    this.loadUsers();
 
     // Conectarse a la sala de SignalR exclusiva para este proyecto
     this.boardHubService.joinBoard(this.projectId).then(() => {
@@ -62,14 +103,15 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
     );
 
     //  Escuchar y actualizar dinámicamente: Tarea Movida
+    // El backend envía un TaskDto con { id, columnId, order }
     this.subs.add(
-      this.boardHubService.taskMoved$.subscribe((payload: { taskId: string, sourceColumnId: string, targetColumnId: string, newOrder: number }) => {
-        if (!payload) return;
+      this.boardHubService.taskMoved$.subscribe((updatedTask: BoardTask) => {
+        if (!updatedTask) return;
 
         let movedTask: BoardTask | undefined;
 
         for (const col of this.columns) {
-          const taskIndex = col.tasks.findIndex(t => t.id === payload.taskId);
+          const taskIndex = col.tasks.findIndex(t => t.id === updatedTask.id);
           if (taskIndex !== -1) {
             movedTask = col.tasks.splice(taskIndex, 1)[0];
             break;
@@ -77,9 +119,9 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
         }
 
         if (movedTask) {
-          movedTask.columnId = payload.targetColumnId;
-          movedTask.order = payload.newOrder;
-          const targetCol = this.columns.find(c => c.id === payload.targetColumnId);
+          movedTask.columnId = updatedTask.columnId;
+          movedTask.order = updatedTask.order;
+          const targetCol = this.columns.find(c => c.id === updatedTask.columnId);
           if (targetCol) {
             targetCol.tasks.push(movedTask);
             this.sortColumnTasks(targetCol);
@@ -207,6 +249,83 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
   private sortColumns(): void {
     // Ordena las columnas si tu modelo cuenta con una propiedad 'order' o 'position'
      this.columns.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }
+
+  loadUsers(): void {
+    this.boardService.getUsers(1, 100).subscribe({
+      next: (response) => (this.users = response.items),
+      error: () => this.showError(null, 'No se pudieron cargar los usuarios.')
+    });
+  }
+
+  openCreateDialog(columnId: string): void {
+    this.editingTask = null;
+    this.targetColumnIdForCreate = columnId;
+    this.form.reset({ title: '', description: '', priority: 'Media', responsibleId: this.users[0]?.id ?? '' });
+    this.dialogVisible = true;
+  }
+
+  openEditDialog(task: BoardTask): void {
+    this.editingTask = task;
+    this.form.reset({
+      title: task.title,
+      description: task.description,
+      priority: task.priority as TaskPriority,
+      responsibleId: task.responsibleId
+    });
+    this.dialogVisible = true;
+  }
+
+  save(): void {
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    const value = this.form.getRawValue();
+
+    const request$ = this.editingTask
+      ? this.boardService.updateTask(this.editingTask.id, {
+        title: value.title!,
+        description: value.description ?? '',
+        priority: value.priority!,
+        responsibleId: value.responsibleId!
+      })
+      : this.boardService.createTask({
+        title: value.title!,
+        description: value.description ?? '',
+        priority: value.priority!,
+        responsibleId: value.responsibleId!,
+        columnId: this.targetColumnIdForCreate
+      });
+
+    request$.subscribe({
+      next: () => { this.dialogVisible = false; },
+      error: (err) => this.showError(err, 'No se pudo guardar la tarea.')
+    });
+  }
+
+  confirmDeleteTask(task: BoardTask): void {
+    this.confirmationService.confirm({
+      message: `¿Eliminar la tarea "${task.title}"?`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.boardService.deleteTask(task.id).subscribe({
+          next: () => {},
+          error: (err) => this.showError(err, 'No se pudo eliminar la tarea.')
+        });
+      }
+    });
+  }
+
+  private showError(err: any, fallback: string): void {
+    const detail = err?.error?.message ?? fallback;
+    this.messageService.add({ severity: 'error', summary: 'Error', detail });
+  }
+
+  priorityColor(priority: string): 'success' | 'warning' | 'danger' | 'info' {
+    switch (priority) {
+      case 'Alta': return 'danger';
+      case 'Media': return 'warning';
+      default: return 'info';
+    }
   }
 
   connectedLists(): string[] {

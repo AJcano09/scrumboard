@@ -17,7 +17,7 @@ describe('ProjectBoardComponent', () => {
   beforeEach(async () => {
     // Mock de los servicios para no hacer peticiones reales
     const reportSpy = jasmine.createSpyObj('ReportService', ['downloadProjectReport']);
-    const boardSpy = jasmine.createSpyObj('BoardService', ['getBoard']);
+    const boardSpy = jasmine.createSpyObj('BoardService', ['getBoard', 'getUsers']);
     const hubSpy = jasmine.createSpyObj('BoardHubService', ['joinBoard', 'leaveBoard'], {
       taskCreated$: of(),
       taskUpdated$: of(),
@@ -31,6 +31,7 @@ describe('ProjectBoardComponent', () => {
     hubSpy.joinBoard.and.returnValue(Promise.resolve());
 
     boardSpy.getBoard.and.returnValue(of({ projectId: '12345', columns: [] }));
+    boardSpy.getUsers.and.returnValue(of({ items: [], totalCount: 0 }));
 
     await TestBed.configureTestingModule({
       imports: [ProjectBoardComponent],
