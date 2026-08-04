@@ -14,12 +14,11 @@
 
     <div class="layout-topbar-userinfo" style="display: flex; align-items: center; gap: 0.75rem; position: absolute; right: 0; top: 50%; transform: translateY(-50%); padding-right: 1.5rem;">
         <span *ngIf="auth.userName()" class="font-bold" style="font-size: 1rem; color: var(--text-color, #1f2937);">{{ auth.userName() }}</span>
-        <button pButton type="button" icon="pi pi-sign-out"
-                class="p-button-text p-button-sm p-button-danger"
+        <button type="button"
+                class="p-link layout-topbar-button"
                 (click)="onLogout()"
-                pTooltip="Cerrar sesión"
-                tooltipPosition="bottom"
-                style="min-width: 32px; width: 32px; height: 32px; padding: 0;">
+                style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #d32f2f;">
+            <i class="pi pi-sign-out"></i>
         </button>
     </div>
 
