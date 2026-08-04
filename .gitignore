@@ -38,3 +38,6 @@ __pycache__/
 .atl/
 backend/.idea/
 backend/.vs/
+
+# Repomix
+repomix-output.xml
