@@ -2,6 +2,7 @@ using ScrumBoard.Application.Common;
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Domain.Entities;
 using ScrumBoard.Domain.Enums;
+using ScrumBoard.Domain.Exceptions;
 
 namespace ScrumBoard.Application.Projects;
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ScrumBoard.Application.Common;
 using ScrumBoard.Application.Projects;
 using ScrumBoard.Domain.Entities;
+using ScrumBoard.Domain.Exceptions;
 
 namespace ScrumBoard.Api.Controllers;
 

@@ -1,6 +1,5 @@
-﻿
-using ScrumBoard.Application.Projects;
-using ScrumBoard.Domain.Enums;
+﻿using ScrumBoard.Domain.Enums;
+using ScrumBoard.Domain.Exceptions;
 
 namespace ScrumBoard.Domain.Entities
 {
