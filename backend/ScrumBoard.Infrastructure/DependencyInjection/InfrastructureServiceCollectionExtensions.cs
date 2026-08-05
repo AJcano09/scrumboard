@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ScrumBoard.Application.Auth;
 using ScrumBoard.Application.Ports;
-using ScrumBoard.Application.Reports;
 using ScrumBoard.Infrastructure.Persistence;
 using ScrumBoard.Infrastructure.Reports;
 using ScrumBoard.Infrastructure.Repositories;

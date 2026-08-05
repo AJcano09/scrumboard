@@ -1,7 +1,8 @@
 using ClosedXML.Excel;
 using ScrumBoard.Application.Ports;
+using ScrumBoard.Application.Reports;
 
-namespace ScrumBoard.Application.Reports;
+namespace ScrumBoard.Infrastructure.Reports;
 
 public class ExcelReportExporter : IReportExporter
 {
