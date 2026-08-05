@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ScrumBoard.Application.Auth;
 using ScrumBoard.Application.Ports;
+using ScrumBoard.Infrastructure.HealthChecks;
 using ScrumBoard.Infrastructure.Persistence;
 using ScrumBoard.Infrastructure.Reports;
 using ScrumBoard.Infrastructure.Repositories;
@@ -39,7 +40,11 @@ namespace ScrumBoard.Infrastructure.DependencyInjection
                 });
             });
 
-            //2. Repositories
+            //2. Health checks
+            services.AddHealthChecks()
+                .AddCheck<DatabaseHealthCheck>("database", tags: new[] { "db" });
+
+            //3. Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();

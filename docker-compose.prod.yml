@@ -7,10 +7,11 @@ services:
       - "${API_PORT:-5001}:8080"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/swagger/index.html || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/health || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 10
+      start_period: 30s
     depends_on:
       postgres:
         condition: service_healthy

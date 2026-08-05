@@ -1,6 +1,7 @@
 using ScrumBoard.Application.Ports;
 using ScrumBoard.Infrastructure.Persistence;
 using ScrumBoard.Infrastructure.Seeders;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 namespace ScrumBoard.Api.DependencyInjection;
 
@@ -24,6 +25,10 @@ public static class WebApplicationExtensions
         app.UseAuthorization();
         
         // 3. Endpoints y Hubs
+        app.UseHealthChecks("/health", new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("db")
+        });
         app.MapControllers();
         app.MapHub<Realtime.BoardHub>("/hubs/board");
 
