@@ -72,16 +72,7 @@ public class ProjectService(IProjectRepository projectRepository, IRealtimeNotif
 
         await projectRepository.DeleteAsync(id);
         await realtimeNotifier.NotifyBoardChangedAsync(id, BoardHubEvents.ProjectDeleted, new { Id = id });
-        return true;
-    }
-
-    private static void Validate(string name, DateTime startDate, DateTime endDate)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ProjectValidationException("El nombre del proyecto es obligatorio.");
-
-        if (endDate < startDate)
-            throw new ProjectValidationException("La fecha de fin no puede ser anterior a la fecha de inicio.");
+         return true;
     }
 
     private static ProjectDto ToDto(Project project) => new()
