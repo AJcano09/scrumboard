@@ -6,7 +6,7 @@ using ScrumBoard.Domain.Exceptions;
 
 namespace ScrumBoard.Application.Projects;
 
-public class ProjectService(IProjectRepository projectRepository)
+public class ProjectService(IProjectRepository projectRepository, IRealtimeNotifier realtimeNotifier)
 {
  
     public async Task<PagedResult<ProjectDto>> GetPagedAsync(string? search, int pageNumber, int pageSize)
@@ -44,6 +44,7 @@ public class ProjectService(IProjectRepository projectRepository)
         );
 
         await projectRepository.AddAsync(project);
+        await realtimeNotifier.NotifyBoardChangedAsync(project.Id, BoardHubEvents.ProjectCreated, ToDto(project));
         return ToDto(project);
     }
 
@@ -60,6 +61,7 @@ public class ProjectService(IProjectRepository projectRepository)
             request.Status
         );
         await projectRepository.UpdateAsync(project);
+        await realtimeNotifier.NotifyBoardChangedAsync(project.Id, BoardHubEvents.ProjectUpdated, ToDto(project));
         return ToDto(project);
     }
 
@@ -69,6 +71,7 @@ public class ProjectService(IProjectRepository projectRepository)
         if (project is null) return false;
 
         await projectRepository.DeleteAsync(id);
+        await realtimeNotifier.NotifyBoardChangedAsync(id, BoardHubEvents.ProjectDeleted, new { Id = id });
         return true;
     }
 

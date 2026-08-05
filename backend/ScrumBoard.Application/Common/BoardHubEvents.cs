@@ -11,4 +11,8 @@ public static class BoardHubEvents
     public const string ColumnUpdated = "columnUpdated";
     public const string ColumnDeleted = "columnDeleted";
     public const string ColumnMoved = "columnMoved";
+
+    public const string ProjectCreated = "projectCreated";
+    public const string ProjectUpdated = "projectUpdated";
+    public const string ProjectDeleted = "projectDeleted";
 }
