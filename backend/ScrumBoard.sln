@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Api", "ScrumBoar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Domain.Tests", "ScrumBoard.Domain.Tests\ScrumBoard.Domain.Tests.csproj", "{27BE9129-9041-450D-AAEC-74DFFF0B18D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Application.Tests", "ScrumBoard.Application.Tests\ScrumBoard.Application.Tests.csproj", "{CCAE363E-FEAC-4851-B9F0-F370FCACA184}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoard.Infrastructure.Tests", "ScrumBoard.Infrastructure.Tests\ScrumBoard.Infrastructure.Tests.csproj", "{BF3F2AAC-EBCA-4B15-91BC-01813E8CAB70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27BE9129-9041-450D-AAEC-74DFFF0B18D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCAE363E-FEAC-4851-B9F0-F370FCACA184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCAE363E-FEAC-4851-B9F0-F370FCACA184}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCAE363E-FEAC-4851-B9F0-F370FCACA184}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCAE363E-FEAC-4851-B9F0-F370FCACA184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF3F2AAC-EBCA-4B15-91BC-01813E8CAB70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF3F2AAC-EBCA-4B15-91BC-01813E8CAB70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF3F2AAC-EBCA-4B15-91BC-01813E8CAB70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF3F2AAC-EBCA-4B15-91BC-01813E8CAB70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
