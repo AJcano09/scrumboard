@@ -63,7 +63,7 @@ namespace ScrumBoard.Infrastructure.Seeders
                     Description = "Planificación de la migración gradual de servicios hacia infraestructura cloud.",
                     StartDate = DateTime.UtcNow.AddMonths(1),
                     EndDate = DateTime.UtcNow.AddMonths(4),
-                    StatusName = "InProgres",
+                    StatusName = "InProgress",
                     Columns = new[]
                     {
                         new { Name = "Por revisar", Order = 1 },
@@ -121,7 +121,7 @@ namespace ScrumBoard.Infrastructure.Seeders
                     Description = "Aplicación para capturar incidencias y visitas en tiempo real para el equipo comercial.",
                     StartDate = DateTime.UtcNow.AddDays(-20),
                     EndDate = DateTime.UtcNow.AddMonths(3),
-                    StatusName = "InProgres",
+                    StatusName = "InProgress",
                     Columns = new[]
                     {
                         new { Name = "Investigación", Order = 1 },
