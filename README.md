@@ -125,16 +125,16 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 ## Decisiones arquitectónicas
 
 - **Arquitectura hexagonal (Clean Architecture):** El código se separa en 4 capas:
-  - **Domain**: entidades y puertos (interfaces) del dominio.
-  - **Application**: casos de uso y orquestación. No conoce infraestructura.
-  - **Infrastructure**: repositorios, servicios externos, SignalR.
-  - **Api**: entry points HTTP, controladores y DTOs.
+  - **Domain**: entidades, enums y excepciones de negocio (sin dependencias externas). No define ni conoce puertos.
+  - **Application**: servicios de aplicación (TaskService, ColumnService, ProjectService…), puertos (interfaces) y orquestación. No conoce infraestructura concreta.
+  - **Infrastructure**: adaptadores de salida — repositorios (EF Core/Npgsql), servicios de seguridad (JWT, PBKDF2), exportadores de reporte.
+  - **Api**: entry points HTTP, controladores, DTOs y Hub de tiempo real (SignalR `BoardHub` + `SignalRBoardNotifier`).
   
   Justificación: permite testear la lógica de negocio de forma aislada y cambiar proveedores (base de datos, colas, etc.) sin tocar el núcleo.
 
-- **CQRS-lite:** Las consultas de lectura usan DTOs optimizados (p. ej. `BoardViewDto`) separados de las entidades de escritura. Así se evita el acoplamiento entre modelo de escritura y modelo de lectura.
+- **Modelo de lectura proyectado (no CQRS):** Las consultas de lectura proyectan directamente a DTOs optimizados (p. ej. `BoardDto`, `TaskDto`) mediante LINQ `Select`, manteniendo el modelo de lectura separado del modelo de escritura de dominio. Así se evita over-posting y se reduce acoplamiento. No se implementa CQRS completo (no hay command/query handlers ni MediaTr); los repositorios exponen métodos de lectura y escritura en una misma interfaz, por lo que es una separación ligera de contratos, no una separación de modelos CQRS.
 
-- **Repository pattern con interfaces (ports):** Cada repositorio expone una interfaz en el dominio (`IBoardRepository`, `ITaskRepository`, etc.). Las implementaciones concretas viven en Infrastructure. Facilita el mocking en tests.
+- **Repository pattern con interfaces (ports):** Cada repositorio expone una interfaz (puerto) en `Application/Ports/` (`ITaskRepository`, `IColumnRepository`, `IProjectRepository`, `IUserRepository`, etc.). Las implementaciones concretas viven en Infrastructure, detrás de estos puertos. Facilita el mocking en tests.
 
 - **Inversión de dependencias:** La capa Application depende únicamente de Domain y de los puertos definidos. La inyección de dependencias se resuelve en Api/Infrastructure.
 
@@ -174,9 +174,9 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
 
 ## Declaración de uso de IA
 
-- **IA utilizada para:** scaffold del backend, generación y refactor de código, escritura y revisión de casos de prueba, configuración de Docker y archivos `.env`.
-- **IA NO utilizada para:** decisiones arquitectónicas (lideradas por el desarrollador) ni código sensible a seguridad (auth, JWT, hashing de contraseñas).
-- Todo código generado por IA fue revisado y validado por el desarrollador humano.
+- **IA utilizada para:** scaffold del backend, generación y refactor de código, generación y revisión de tests unitarios de backend (TaskService, ColumnService, PasswordHasher, exportadores PDF/Excel), análisis comparativo de librerías para la exportación (ClosedXML vs EPPlus — decisión basada en licencia MIT vs PolyForm NonCommercial), correcciones arquitectónicas menores (layering hexagonal, filename casing, notificaciones SignalR en ProjectService, refactor de dead code) y ajustes de documentación.
+- **IA NO utilizada para:** decisiones arquitectónicas (arquitectura hexagonal, ordenamiento fraccionario, selección de SignalR/tiempo real, patrón Strategy de exportación), ni código sensible a seguridad (generación y validación de JWT, hashing PBKDF2 con salt+pepper y comparación constante en tiempo).
+- Todo código generado por IA fue revisado, validado y aprobado por el desarrollador humano.
 
 ---
 
