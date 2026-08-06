@@ -16,9 +16,11 @@ dotnet tool install --global dotnet-ef
 
 ### Ejecución con Docker
 
-No es necesario crear ni copiar archivos .env manualmente; cada ambiente incluye un template que se lee con `--env-file` (comando idéntico en Windows/macOS/Linux).
+No es necesario crear ni copiar archivos `.env` manualmente; cada ambiente incluye un template que se lee con `--env-file` (comando idéntico en Windows/macOS/Linux).
 
-1. Levante el stack en modo desarrollo:
+#### Modo desarrollo
+
+1. Levante el stack:
 
 ```bash
 docker compose --env-file .env.development.example -f docker-compose.yml -f docker-compose.dev.yml up --build
@@ -29,7 +31,22 @@ Esto levanta:
 - La API en http://localhost:5001/swagger.
 - La SPA en http://localhost:4201.
 
-2. Levante el stack en modo producción:
+2. Espere a que los tres servicios terminen de arrancar (la API corre con `dotnet watch`, así que la primera compilación puede tardar un par de minutos).
+
+3. Abra la SPA en el navegador: **http://localhost:4201**
+
+4. Inicie sesión con uno de los usuarios de prueba sembrados automáticamente al arrancar la API:
+
+   | Usuario | Contraseña |
+   |---|---|
+   | `admin@scrumboard.com` | `Login.1234` |
+   | `admin2@scrumboard.com` | `Login.1234` |
+
+   El seeder también crea un proyecto de ejemplo con columnas iniciales, listo para probar el tablero.
+
+#### Modo producción
+
+1. Levante el stack:
 
 ```bash
 docker compose --env-file .env.production.example -f docker-compose.yml -f docker-compose.prod.yml up --build -d
@@ -39,6 +56,23 @@ Esto levanta:
 - PostgreSQL en el puerto 5432.
 - La API en http://localhost:5001/health.
 - La SPA en http://localhost:80.
+
+2. Verifique que la API esté saludable (el contenedor incluye healthcheck):
+
+```bash
+docker compose --env-file .env.production.example -f docker-compose.yml -f docker-compose.prod.yml ps
+```
+
+El servicio `api` debe mostrar estado `healthy`.
+
+3. Abra la SPA en el navegador: **http://localhost** (puerto 80, no hace falta indicarlo en la URL)
+
+4. Inicie sesión con los mismos usuarios de prueba:
+
+   | Usuario | Contraseña |
+   |---|---|
+   | `admin@scrumboard.com` | `Login.1234` |
+   | `admin2@scrumboard.com` | `Login.1234` |
 
 ### Bajar servicios
 
@@ -103,14 +137,48 @@ dotnet ef database update --project ScrumBoard.Infrastructure --startup-project 
 
 ---
 
-```bash
-20260731011213_InitialCreate
-20260802174332_ChangeTaskOrderToDecimal
-20260803161053_AddProjectStatusProperty
-20260803162730_RemoveOrderFromProject
+## Arquitectura de alto nivel
+
+```mermaid
+graph TD
+    subgraph Frontend [Frontend - Angular 17 & PrimeNG]
+        UI[Componentes de Interfaz: ProjectsList, ProjectBoard]
+        ClientServices[Servicios Frontend: ProjectService, BoardService, BoardHubService]
+    end
+
+    subgraph BackendAPI [Backend - ASP.NET Core 8 Web API]
+        Controllers[Controllers REST: Projects, Board, Columns, Tasks, Reports, Auth]
+        SignalR[Hub en Tiempo Real: BoardHub]
+    end
+
+    subgraph ApplicationDomain [Capa de Aplicación y Dominio]
+        AppServices[Servicios de Negocio y DTOs]
+        DomainModels[Entidades y Lógica: Project, Column, Task, User, TaskOrderCalculator]
+    end
+
+    subgraph Infrastructure [Capa de Infraestructura y Datos]
+        DbContext[ScrumBoardDbContext & Repositories]
+        Exporters[Exportadores: ExcelReportExporter, PdfReportExporter]
+        DB[(Base de Datos PostgreSQL)]
+    end
+
+    UI --> ClientServices
+    ClientServices -->|HTTP / REST| Controllers
+    ClientServices -->|WebSocket / SignalR| SignalR
+    Controllers --> AppServices
+    SignalR --> AppServices
+    AppServices --> DomainModels
+    AppServices --> DbContext
+    DbContext --> DB
+    AppServices --> Exporters
 ```
 ---
 
+## Modelo de Base de Datos
+
+![Diagrama ER ScrumBoard](./scrumboard_diagram.png)
+ 
+ ---
 ## Testing rápido en Docker
 
 1. Levante el stack con Docker (development):
