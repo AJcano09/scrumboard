@@ -21,12 +21,12 @@ export const routes: Routes = [
       },
       {
         path: 'projects',
-        loadComponent: () => import('./features/projects/pages/projects.list.component')
+        loadComponent: () => import('./features/Projects/pages/projects.list.component')
           .then(m => m.ProjectsListComponent)
       },
       {
         path: 'projects/:id/board',
-        loadComponent: () => import('./features/projects/pages/project-board.component')
+        loadComponent: () => import('./features/Projects/pages/project-board.component')
           .then(m => m.ProjectBoardComponent)
       },
       {
