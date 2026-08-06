@@ -43,8 +43,8 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 
 Esto levanta:
 - PostgreSQL en el puerto 5432.
-- La API en http://localhost:5001/swagger.
-- La SPA en http://localhost:8080.
+- La API en http://localhost:5001/health.
+- La SPA en http://localhost:80.
 
 ### Variables de entorno
 
