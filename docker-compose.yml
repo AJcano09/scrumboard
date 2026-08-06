@@ -28,6 +28,7 @@ services:
       Jwt__JwtSettings__Audience: ${Jwt__JwtSettings__Audience:-ScrumBoardClient}
       Jwt__JwtSettings__ExpirationMinutes: ${Jwt__JwtSettings__ExpirationMinutes:-60}
       Security__Pepper: ${Security__Pepper:-change-me-in-production}
+      Cors__AllowedOrigins: ${Cors__AllowedOrigins:-http://localhost:4200;http://localhost:80}
     depends_on:
       postgres:
         condition: service_healthy

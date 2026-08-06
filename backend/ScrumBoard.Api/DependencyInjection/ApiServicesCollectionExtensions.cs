@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using ScrumBoard.Api.Realtime;
 using ScrumBoard.Application.Ports;
 
@@ -13,12 +15,19 @@ public static class ApiServicesCollectionExtensions
         services.AddCors(options =>
         {
             options.AddPolicy("CorsPolicy", builder =>
-                builder.WithOrigins("http://localhost:4200") 
+            {
+                var allowedOrigins = configuration["Cors:AllowedOrigins"]
+                    ?.Split(';', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(o => o.Trim())
+                    .ToArray();
+
+                builder.WithOrigins(allowedOrigins ?? Array.Empty<string>())
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowCredentials();
+            });
         });
-        
+
         return services;
     }
 }

@@ -16,18 +16,12 @@ dotnet tool install --global dotnet-ef
 
 ### Ejecución con Docker
 
-1. Copie el archivo de ejemplo de variables de entorno:
+No es necesario crear ni copiar archivos .env manualmente; cada ambiente incluye un template que se lee con `--env-file` (comando idéntico en Windows/macOS/Linux).
+
+1. Levante el stack en modo desarrollo:
 
 ```bash
-cp .env.example .env
-```
-
-El archivo ya trae valores funcionales por defecto para Postgres, la API y el frontend.
-
-2. Levante el stack en modo desarrollo:
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+docker compose --env-file .env.development.example -f docker-compose.yml -f docker-compose.dev.yml up --build
 ```
 
 Esto levanta:
@@ -35,10 +29,10 @@ Esto levanta:
 - La API en http://localhost:5001/swagger.
 - La SPA en http://localhost:4201.
 
-3. Levante el stack en modo producción:
+2. Levante el stack en modo producción:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+docker compose --env-file .env.production.example -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 ```
 
 Esto levanta:
@@ -46,14 +40,28 @@ Esto levanta:
 - La API en http://localhost:5001/health.
 - La SPA en http://localhost:80.
 
+### Bajar servicios
+
+Para detener y limpiar los contenedores:
+
+```bash
+docker compose --env-file .env.development.example -f docker-compose.yml -f docker-compose.dev.yml down
+docker compose --env-file .env.production.example -f docker-compose.yml -f docker-compose.prod.yml down
+```
+
 ### Variables de entorno
 
-El proyecto usa un único archivo .env en la raíz. Allí pueden ajustarse:
+Los templates de entorno son `.env.development.example` y `.env.production.example`. Allí pueden ajustarse:
 - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`
 - `ConnectionStrings__ScrumBoardConnection`
 - `Jwt__JwtSettings__Secret`, `Jwt__JwtSettings__Issuer`, `Jwt__JwtSettings__Audience`, `Jwt__JwtSettings__ExpirationMinutes`
 - `Security__Pepper`
-- `API_PORT`, `WEB_PORT`, `API_URL`
+- `API_PORT`, `API_URL`, `Cors__AllowedOrigins`
+- `WEB_PORT` (desarrollo) o `PROD_WEB_PORT` (producción)
+
+`Cors__AllowedOrigins` difiere por ambiente: desarrollo expone `:4201`, producción expone `:80`.
+
+`ASPNETCORE_ENVIRONMENT=Development` está hardcoded en `docker-compose.dev.yml` (no es una variable de `.env`).
 
 ### Usuarios de prueba
 
@@ -75,6 +83,7 @@ export Jwt__JwtSettings__Issuer="ScrumBoardApi"
 export Jwt__JwtSettings__Audience="ScrumBoardClient"
 export Jwt__JwtSettings__ExpirationMinutes=60
 export Security__Pepper="change-me-in-production"
+export Cors__AllowedOrigins="http://localhost:4201"
 
 cd backend
 dotnet run --project ScrumBoard.Api
@@ -90,7 +99,16 @@ Si ejecuta la API fuera de Docker, desde la carpeta `backend` aplique las migrac
 
 ```bash
 dotnet ef database update --project ScrumBoard.Infrastructure --startup-project ScrumBoard.Api
+```
 
+---
+
+```bash
+20260731011213_InitialCreate
+20260802174332_ChangeTaskOrderToDecimal
+20260803161053_AddProjectStatusProperty
+20260803162730_RemoveOrderFromProject
+```
 ---
 
 ## Testing rápido en Docker
@@ -98,7 +116,7 @@ dotnet ef database update --project ScrumBoard.Infrastructure --startup-project 
 1. Levante el stack con Docker (development):
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+docker compose --env-file .env.development.example -f docker-compose.yml -f docker-compose.dev.yml up --build
 ```
 
 2. Verifique que la API esté arriba abriendo Swagger en:
