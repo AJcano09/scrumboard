@@ -2,11 +2,12 @@ import {ProjectBoardComponent} from "./project-board.component";
 import {ComponentFixture, TestBed} from "@angular/core/testing";
 import {ReportService} from "../../reports/services/report.service";
 import {BoardService} from "../../board/services/board.service";
+import {BoardTask} from "../../board/models/board.model";
 import {BoardHubService} from "../../../core/realtime/board-hub.service";
 import {ActivatedRoute} from "@angular/router";
 import {ProjectService} from "../services/project.service";
 import {By} from "@angular/platform-browser";
-import {of} from "rxjs";
+import {of, Subject} from "rxjs";
 
 describe('ProjectBoardComponent', () => {
   let component: ProjectBoardComponent;
@@ -15,26 +16,32 @@ describe('ProjectBoardComponent', () => {
   let boardServiceSpy: jasmine.SpyObj<BoardService>;
   let projectServiceSpy: jasmine.SpyObj<ProjectService>;
   let boardHubServiceSpy: jasmine.SpyObj<BoardHubService>;
+  let taskDeleted$: Subject<any>;
+  let columnDeleted$: Subject<any>;
 
   beforeEach(async () => {
     // Mock de los servicios para no hacer peticiones reales
     const reportSpy = jasmine.createSpyObj('ReportService', ['downloadProjectReport']);
-    const boardSpy = jasmine.createSpyObj('BoardService', ['getBoard', 'getUsers']);
+    const boardSpy = jasmine.createSpyObj('BoardService', ['getBoard', 'getUsers', 'deleteTask']);
     const projectSpy = jasmine.createSpyObj('ProjectService', ['getById']);
+    taskDeleted$ = new Subject<any>();
+    columnDeleted$ = new Subject<any>();
     const hubSpy = jasmine.createSpyObj('BoardHubService', ['joinBoard', 'leaveBoard'], {
       taskCreated$: of(),
       taskUpdated$: of(),
-      taskDeleted$: of(),
+      taskDeleted$,
       taskMoved$: of(),
+
       columnCreated$: of(),
       columnUpdated$: of(),
-      columnDeleted$: of(),
+      columnDeleted$,
       columnMoved$: of()
     });
     hubSpy.joinBoard.and.returnValue(Promise.resolve());
 
     boardSpy.getBoard.and.returnValue(of({ projectId: '12345', columns: [] }));
     boardSpy.getUsers.and.returnValue(of({ items: [], totalCount: 0 }));
+    boardSpy.deleteTask.and.returnValue(of(undefined));
     projectSpy.getById.and.returnValue(of({ id: '12345', name: 'Proyecto Test', description: '', startDate: '', endDate: '', status: 'InProgress' }));
 
     await TestBed.configureTestingModule({
@@ -51,6 +58,7 @@ describe('ProjectBoardComponent', () => {
     fixture = TestBed.createComponent(ProjectBoardComponent);
     component = fixture.componentInstance;
     reportServiceSpy = TestBed.inject(ReportService) as jasmine.SpyObj<ReportService>;
+    boardServiceSpy = TestBed.inject(BoardService) as jasmine.SpyObj<BoardService>;
     projectServiceSpy = TestBed.inject(ProjectService) as jasmine.SpyObj<ProjectService>;
 
     // Los mocks ya retornan observables por defecto; detectChanges dispara ngOnInit
@@ -116,5 +124,48 @@ describe('ProjectBoardComponent', () => {
     expect(anchorSpy.click).toHaveBeenCalled();
     expect(document.body.removeChild).toHaveBeenCalledWith(anchorSpy);
     expect(window.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test-url');
+  });
+
+  // --- Eventos en tiempo real: el backend envía un objeto { id } (camelCase) ---
+  it('Debe eliminar la tarea del tablero cuando taskDeleted$ emite { id }', () => {
+    const taskId = 'task-1';
+    const task: BoardTask = {
+      id: taskId, title: 'Tarea de prueba', description: '', priority: 'Media',
+      responsibleId: '', responsibleName: '', columnId: 'col-1', order: 0, createdAt: ''
+    };
+    component.columns = [{ id: 'col-1', name: 'Por hacer', order: 0, tasks: [task] }];
+
+    taskDeleted$.next({ id: taskId });
+
+    expect(component.columns[0].tasks.length).toBe(0);
+    expect(component.columns[0].tasks.find(t => t.id === taskId)).toBeUndefined();
+  });
+
+  it('Debe eliminar la columna del tablero cuando columnDeleted$ emite { id }', () => {
+    component.columns = [
+      { id: 'col-1', name: 'Por hacer', order: 0, tasks: [] },
+      { id: 'col-2', name: 'Hecho', order: 1, tasks: [] }
+    ];
+
+    columnDeleted$.next({ id: 'col-2' });
+
+    expect(component.columns.length).toBe(1);
+    expect(component.columns.find(c => c.id === 'col-2')).toBeUndefined();
+  });
+
+  it('Debe recargar el tablero tras eliminar la tarea con éxito', () => {
+    const task: BoardTask = {
+      id: 'task-1', title: 'Tarea a eliminar', description: '', priority: 'Baja',
+      responsibleId: '', responsibleName: '', columnId: 'col-1', order: 0, createdAt: ''
+    };
+
+    spyOn(component as any, 'loadBoardData');
+    const confirmationService = (component as any).confirmationService;
+    spyOn(confirmationService, 'confirm').and.callFake((options: any) => options.accept());
+
+    component.confirmDeleteTask(task);
+
+    expect(boardServiceSpy.deleteTask).toHaveBeenCalledWith('task-1');
+    expect((component as any).loadBoardData).toHaveBeenCalled();
   });
 });

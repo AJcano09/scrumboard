@@ -164,10 +164,10 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
 
     //delete task
     this.subs.add(
-      this.boardHubService.taskDeleted$.subscribe((taskId: string) => {
-        if (!taskId) return;
+      this.boardHubService.taskDeleted$.subscribe((payload: { id: string }) => {
+        if (!payload?.id) return;
         for (const col of this.columns) {
-          const taskIndex = col.tasks.findIndex(t => t.id === taskId);
+          const taskIndex = col.tasks.findIndex(t => t.id === payload.id);
           if (taskIndex !== -1) {
             col.tasks.splice(taskIndex, 1);
             break;
@@ -206,9 +206,9 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
 
     //  Columna Eliminada
     this.subs.add(
-      this.boardHubService.columnDeleted$.subscribe((columnId: string) => {
-        if (!columnId) return;
-        this.columns = this.columns.filter(c => c.id !== columnId);
+      this.boardHubService.columnDeleted$.subscribe((payload: { id: string }) => {
+        if (!payload?.id) return;
+        this.columns = this.columns.filter(c => c.id !== payload.id);
       })
     );
 
@@ -328,7 +328,7 @@ export class ProjectBoardComponent implements  OnInit, OnDestroy{
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.boardService.deleteTask(task.id).subscribe({
-          next: () => {},
+          next: () => this.loadBoardData(),
           error: (err) => this.showError(err, 'No se pudo eliminar la tarea.')
         });
       }
